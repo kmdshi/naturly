@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_side_menu/flutter_side_menu.dart';
 import 'package:naturly/src/core/services/responsive_detection.dart';
+import 'package:naturly/src/features/analysis/presentation/analysis_screen.dart';
 import 'package:naturly/src/features/home/widget/home_screen.dart';
 import 'package:naturly/src/features/schedule/presentation/schedule_screen.dart';
 import 'package:naturly/src/features/settings/presentation/settings_screen.dart';
@@ -19,6 +21,7 @@ class _RootScreenState extends State<RootScreen> {
   List<Widget> get pages => [
         HomeScreen(),
         ScheduleScreen(),
+        AnalysisScreen(),
         SettingsScreen(),
       ];
 
@@ -26,54 +29,6 @@ class _RootScreenState extends State<RootScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      drawer: !Responsive.isMobile(context)
-          ? Drawer(
-              child: ListView(
-                children: <Widget>[
-                  const DrawerHeader(
-                    child: Text('Menu'),
-                    decoration: BoxDecoration(color: Colors.blue),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.home),
-                    title: const Text('Домашняя'),
-                    onTap: () {
-                      if (activeIndex != 0) {
-                        setState(() {
-                          activeIndex = 0;
-                        });
-                      }
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.list),
-                    title: Text('Расписание'),
-                    onTap: () {
-                      if (activeIndex != 1) {
-                        setState(() {
-                          activeIndex = 1;
-                        });
-                      }
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Настройки'),
-                    leading: Icon(Icons.graphic_eq),
-                    onTap: () {
-                      if (activeIndex != 2) {
-                        setState(() {
-                          activeIndex = 2;
-                        });
-                      }
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            )
-          : null,
       bottomNavigationBar: Responsive.isMobile(context)
           ? BottomNavigationBar(
               currentIndex: activeIndex,
@@ -98,7 +53,71 @@ class _RootScreenState extends State<RootScreen> {
               },
             )
           : null,
-      body: pages[activeIndex],
+      body: !Responsive.isMobile(context)
+          ? Row(
+              children: [
+                SideMenu(
+                  builder: (data) => SideMenuData(
+                    // header: const Text('Header'),
+                    items: [
+                      SideMenuItemDataTile(
+                        isSelected: activeIndex == 0 ? true : false,
+                        onTap: () {
+                          if (activeIndex != 0) {
+                            setState(() {
+                              activeIndex = 0;
+                            });
+                          }
+                        },
+                        title: 'Домашняя',
+                        icon: const Icon(Icons.home),
+                      ),
+                      SideMenuItemDataTile(
+                        isSelected: activeIndex == 1 ? true : false,
+                        onTap: () {
+                          if (activeIndex != 1) {
+                            setState(() {
+                              activeIndex = 1;
+                            });
+                          }
+                        },
+                        title: 'Расписание',
+                        icon: const Icon(Icons.home),
+                      ),
+                      SideMenuItemDataTile(
+                        isSelected: activeIndex == 2 ? true : false,
+                        onTap: () {
+                          if (activeIndex != 2) {
+                            setState(() {
+                              activeIndex = 2;
+                            });
+                          }
+                        },
+                        title: 'Анализ',
+                        icon: const Icon(Icons.home),
+                      ),
+                      SideMenuItemDataTile(
+                        isSelected: activeIndex == 3 ? true : false,
+                        onTap: () {
+                          if (activeIndex != 3) {
+                            setState(() {
+                              activeIndex = 3;
+                            });
+                          }
+                        },
+                        title: 'Настройки',
+                        icon: const Icon(Icons.home),
+                      ),
+                    ],
+                    // footer: const Text('Footer'),
+                  ),
+                ),
+                Expanded(
+                  child: pages[activeIndex],
+                ),
+              ],
+            )
+          : pages[activeIndex],
     );
   }
 }
