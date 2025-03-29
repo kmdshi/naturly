@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'food_enums.dart';
 import 'product_model.dart';
 
 class Dish {
@@ -13,9 +14,11 @@ class Dish {
   final int protein;
   final int fats;
   final int carbs;
-  final int? totalMissingCost;
 
-  const Dish({
+  final int? totalMissingCost;
+  late final ProductGroup generalProductGroup;
+
+  Dish({
     required this.title,
     required this.products,
     required this.calories,
@@ -26,7 +29,9 @@ class Dish {
     required this.fats,
     required this.carbs,
     this.totalMissingCost,
-  });
+  }) {
+    generalProductGroup = _calculateDishGroup(products);
+  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -43,18 +48,28 @@ class Dish {
     };
   }
 
+  ProductGroup _calculateDishGroup(List<Product> products) {
+    Map<ProductGroup, int> groupCount = {};
+
+    for (final product in products) {
+      groupCount[product.productGroup] =
+          (groupCount[product.productGroup] ?? 0) + 1;
+    }
+
+    if (groupCount.containsKey(ProductGroup.soupsAndBroths)) {
+      return ProductGroup.soupsAndBroths;
+    }
+
+    return groupCount.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+  }
+
   @override
   String toString() {
-    return 'Dish(title: $title, '
-        'products: ${products.map((p) => p.toString()).join(", ")}, '
-        'calories: $calories, '
-        'restrictions: ${restrictions.join(", ")}, '
-        'totalPrice: $totalPrice, '
-        'missingProducts: ${missingProducts.map((p) => p.toString()).join(", ")}, '
-        'protein: $protein, '
-        'fats: $fats, '
-        'carbs: $carbs, '
-        'totalMissingCost: $totalMissingCost)';
+    return 'title: $title'
+        'calories: $calories'
+        'protein: $protein'
+        'fats: $fats'
+        'carbs: $carbs';
   }
 
   factory Dish.fromMap(Map<String, dynamic> map) {

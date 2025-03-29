@@ -5,6 +5,7 @@ enum ProductGroup {
   fishPoultryMeatAndEggs,
   addedFatsNutsSeedsAndOilyFruits,
   sugarSweetsAndSnacks,
+  soupsAndBroths
 }
 
 enum MeatType {

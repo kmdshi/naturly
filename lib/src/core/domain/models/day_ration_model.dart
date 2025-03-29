@@ -2,24 +2,46 @@
 import 'dish_model.dart';
 
 class DayRation {
-  final String day;
-  final Dish morningDish;
-  final Dish lunchDish;
-  final Dish snackDish;
-  final Dish dinnerDish;
-  final int totalCcal;
+  final String? day;
+  final int? dayIndex;
+  final Dish? morningDish;
+  final Dish? lunchDish;
+  final Dish? snackDish;
+  final Dish? dinnerDish;
+  final int? totalCcal;
 
   const DayRation({
-    required this.day,
-    required this.morningDish,
-    required this.lunchDish,
-    required this.snackDish,
-    required this.dinnerDish,
-    required this.totalCcal,
+    this.day,
+    this.dayIndex,
+    this.morningDish,
+    this.lunchDish,
+    this.snackDish,
+    this.dinnerDish,
+    this.totalCcal,
   });
 
   @override
   String toString() {
     return 'Day: $day, ccal: $totalCcal';
+  }
+
+  DayRation copyWith({
+    String? day,
+    int? dayIndex,
+    Dish? morningDish,
+    Dish? lunchDish,
+    Dish? snackDish,
+    Dish? dinnerDish,
+    int? totalCcal,
+  }) {
+    return DayRation(
+      day: day ?? this.day,
+      dayIndex: dayIndex ?? this.dayIndex,
+      morningDish: morningDish ?? this.morningDish,
+      lunchDish: lunchDish ?? this.lunchDish,
+      snackDish: snackDish ?? this.snackDish,
+      dinnerDish: dinnerDish ?? this.dinnerDish,
+      totalCcal: totalCcal ?? this.totalCcal,
+    );
   }
 }

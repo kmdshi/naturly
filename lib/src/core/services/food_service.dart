@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:naturly/src/core/domain/models/day_ration_model.dart';
 import 'package:naturly/src/core/domain/models/dish_model.dart';
 import 'package:naturly/src/core/domain/models/food_enums.dart';
@@ -35,6 +36,7 @@ class FoodService {
       ProductGroup.fishPoultryMeatAndEggs: 5,
       ProductGroup.addedFatsNutsSeedsAndOilyFruits: 3,
       ProductGroup.sugarSweetsAndSnacks: 2,
+      ProductGroup.soupsAndBroths: 2
     };
 
     for (int day = 0; day < 7; day++) {
@@ -58,18 +60,39 @@ class FoodService {
       carbsLeft -= morningDish.carbs;
       caloriesLeft -= morningDish.calories;
 
-      Dish lunchDish = _selectDishWithGroupFrequency(
-        (availableLunchDishes?.isNotEmpty ?? false)
-            ? availableLunchDishes!
-            : otherLunchDishes,
-        proteinLeft,
-        fatsLeft,
-        carbsLeft,
-        caloriesLeft,
-        day,
-        selectedDishes,
-        groupFrequency,
-      );
+      Dish lunchDish;
+
+      if (day == 0) {
+        lunchDish = _selectDishWithGroupFrequency(
+          (availableLunchDishes?.isNotEmpty ?? false)
+              ? availableLunchDishes!
+              : otherLunchDishes,
+          proteinLeft,
+          fatsLeft,
+          carbsLeft,
+          caloriesLeft,
+          day,
+          selectedDishes,
+          groupFrequency,
+        );
+      } else {
+        if (weekRation.elementAtOrNull(day) != null) {
+          lunchDish = weekRation[day].lunchDish!;
+        } else {
+          lunchDish = _selectDishWithGroupFrequency(
+            (availableLunchDishes?.isNotEmpty ?? false)
+                ? availableLunchDishes!
+                : otherLunchDishes,
+            proteinLeft,
+            fatsLeft,
+            carbsLeft,
+            caloriesLeft,
+            day,
+            selectedDishes,
+            groupFrequency,
+          );
+        }
+      }
 
       proteinLeft -= lunchDish.protein;
       fatsLeft -= lunchDish.fats;
@@ -112,16 +135,31 @@ class FoodService {
       carbsLeft -= dinnerDish.carbs;
       caloriesLeft -= dinnerDish.calories;
 
-      weekRation.add(DayRation(
-          day: dayOfWeek,
-          morningDish: morningDish,
-          lunchDish: lunchDish,
-          snackDish: snackDish,
-          dinnerDish: dinnerDish,
-          totalCcal: dinnerDish.calories +
-              snackDish.calories +
-              lunchDish.calories +
-              morningDish.calories));
+      if (weekRation.elementAtOrNull(day) != null) {
+        weekRation[day] = weekRation[day].copyWith(
+            day: dayOfWeek,
+            dayIndex: day,
+            morningDish: morningDish,
+            snackDish: snackDish,
+            dinnerDish: dinnerDish,
+            totalCcal: dinnerDish.calories +
+                snackDish.calories +
+                lunchDish.calories +
+                morningDish.calories);
+      } else {
+        weekRation.add(DayRation(
+            day: dayOfWeek,
+            dayIndex: day,
+            morningDish: morningDish,
+            lunchDish: lunchDish,
+            snackDish: snackDish,
+            dinnerDish: dinnerDish,
+            totalCcal: dinnerDish.calories +
+                snackDish.calories +
+                lunchDish.calories +
+                morningDish.calories));
+        _handleSoupDish(day, weekRation, lunchDish);
+      }
     }
 
     return weekRation;
@@ -137,6 +175,7 @@ class FoodService {
     List<Dish> otherSnackDishes,
     List<Dish> otherDinnerDishes,
     String day,
+    int dayIndex,
     Human person,
   ) {
     final pfc = person.calculateWeeklyMacronutrients();
@@ -203,16 +242,16 @@ class FoodService {
     caloriesLeft -= dinnerDish.calories;
 
     return DayRation(
-      day: day,
-      morningDish: morningDish,
-      lunchDish: lunchDish,
-      snackDish: snackDish,
-      dinnerDish: dinnerDish,
-      totalCcal: dinnerDish.calories +
-              snackDish.calories +
-              lunchDish.calories +
-              morningDish.calories
-    );
+        day: day,
+        dayIndex: dayIndex,
+        morningDish: morningDish,
+        lunchDish: lunchDish,
+        snackDish: snackDish,
+        dinnerDish: dinnerDish,
+        totalCcal: dinnerDish.calories +
+            snackDish.calories +
+            lunchDish.calories +
+            morningDish.calories);
   }
 
   List<Dish> findAvailableDishes(
@@ -275,52 +314,6 @@ class FoodService {
     }
   }
 
-  ProductGroup _calculateDishGroup(Dish dish) {
-    int grainsAndPotatoesCount = 0;
-    int vegetablesFruitsAndBerriesCount = 0;
-    int dairyAndDairyProductsCount = 0;
-    int fishPoultryMeatAndEggsCount = 0;
-    int addedFatsNutsSeedsAndOilyFruitsCount = 0;
-    int sugarSweetsAndSnacksCount = 0;
-
-    for (final product in dish.products) {
-      switch (product.productGroup) {
-        case ProductGroup.grainsAndPotatoes:
-          grainsAndPotatoesCount++;
-          break;
-        case ProductGroup.vegetablesFruitsAndBerries:
-          vegetablesFruitsAndBerriesCount++;
-          break;
-        case ProductGroup.dairyAndDairyProducts:
-          dairyAndDairyProductsCount++;
-          break;
-        case ProductGroup.fishPoultryMeatAndEggs:
-          fishPoultryMeatAndEggsCount++;
-          break;
-        case ProductGroup.addedFatsNutsSeedsAndOilyFruits:
-          addedFatsNutsSeedsAndOilyFruitsCount++;
-          break;
-        case ProductGroup.sugarSweetsAndSnacks:
-          sugarSweetsAndSnacksCount++;
-          break;
-      }
-    }
-
-    final groupCounts = {
-      ProductGroup.grainsAndPotatoes: grainsAndPotatoesCount,
-      ProductGroup.vegetablesFruitsAndBerries: vegetablesFruitsAndBerriesCount,
-      ProductGroup.dairyAndDairyProducts: dairyAndDairyProductsCount,
-      ProductGroup.fishPoultryMeatAndEggs: fishPoultryMeatAndEggsCount,
-      ProductGroup.addedFatsNutsSeedsAndOilyFruits:
-          addedFatsNutsSeedsAndOilyFruitsCount,
-      ProductGroup.sugarSweetsAndSnacks: sugarSweetsAndSnacksCount,
-    };
-
-    return groupCounts.entries
-        .reduce((curr, next) => curr.value > next.value ? curr : next)
-        .key;
-  }
-
   Dish _selectDishWithGroupFrequency(
     final List<Dish> dishes,
     double proteinLeft,
@@ -332,7 +325,6 @@ class FoodService {
     final Map<ProductGroup, int> groupFrequency,
   ) {
     Dish selectedDish;
-    ProductGroup selectedDishGroup;
 
     while (true) {
       selectedDish = dishes[Random().nextInt(dishes.length)];
@@ -343,18 +335,19 @@ class FoodService {
         continue;
       }
 
-      selectedDishGroup = _calculateDishGroup(selectedDish);
-
-      groupFrequency[selectedDishGroup] =
-          groupFrequency[selectedDishGroup]! - 1;
+      groupFrequency[selectedDish.generalProductGroup] =
+          groupFrequency[selectedDish.generalProductGroup]! - 1;
 
       proteinLeft -= selectedDish.protein;
       fatsLeft -= selectedDish.fats;
       carbsLeft -= selectedDish.carbs;
       caloriesLeft -= selectedDish.calories;
 
-      selectedDayDishes[selectedDish] = currentDay;
-
+      if (selectedDish.generalProductGroup == ProductGroup.soupsAndBroths) {
+        selectedDayDishes[selectedDish] = currentDay + 3;
+      } else {
+        selectedDayDishes[selectedDish] = currentDay;
+      }
       break;
     }
 
@@ -379,6 +372,44 @@ class FoodService {
 
     int randomIndex = Random().nextInt(dishes.length);
     return dishes[randomIndex];
+  }
+
+  void _handleSoupDish(
+    int day,
+    List<DayRation> weekRation,
+    Dish lunchDish,
+  ) {
+    if (lunchDish.generalProductGroup == ProductGroup.soupsAndBroths) {
+      int daysToFill = 0;
+
+      if (day + 1 < 7 && weekRation.length <= day + 1) {
+        daysToFill += 1;
+      }
+
+      if (day + 2 < 7 && weekRation.length <= day + 2) {
+        daysToFill += 1;
+      }
+
+      if (daysToFill > 0) {
+        for (int i = 0; i < daysToFill; i++) {
+          int targetDay = day + i + 1;
+          if (targetDay < 7 && weekRation.length <= targetDay) {
+            weekRation.insert(
+              targetDay,
+              DayRation(
+                day: null,
+                dayIndex: null,
+                morningDish: null,
+                lunchDish: lunchDish,
+                snackDish: null,
+                dinnerDish: null,
+                totalCcal: null,
+              ),
+            );
+          }
+        }
+      }
+    }
   }
 
   String _getDayOfWeek(int dayIndex) {
