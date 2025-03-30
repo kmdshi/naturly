@@ -2,7 +2,7 @@
 import 'dish_model.dart';
 
 class DayRation {
-  final String? day;
+  final DateTime? day;
   final int? dayIndex;
   final Dish? morningDish;
   final Dish? lunchDish;
@@ -25,8 +25,34 @@ class DayRation {
     return 'Day: $day, ccal: $totalCcal';
   }
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    if (other is! DayRation) return false;
+
+    return other.day == day &&
+        other.dayIndex == dayIndex &&
+        other.morningDish == morningDish &&
+        other.lunchDish == lunchDish &&
+        other.snackDish == snackDish &&
+        other.dinnerDish == dinnerDish &&
+        other.totalCcal == totalCcal;
+  }
+
+  @override
+  int get hashCode {
+    return day.hashCode ^
+        dayIndex.hashCode ^
+        morningDish.hashCode ^
+        lunchDish.hashCode ^
+        snackDish.hashCode ^
+        dinnerDish.hashCode ^
+        totalCcal.hashCode;
+  }
+
   DayRation copyWith({
-    String? day,
+    DateTime? day,
     int? dayIndex,
     Dish? morningDish,
     Dish? lunchDish,

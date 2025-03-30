@@ -14,7 +14,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('Настройки'),
+        child: Column(
+          children: [
+            Text('Настройки'),
+          ],
+        ),
       ),
     );
   }

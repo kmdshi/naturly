@@ -6,6 +6,7 @@ import 'product_model.dart';
 
 class Dish {
   final String title;
+  final String mealType;
   final List<Product> products;
   final int calories;
   final Set<String> restrictions;
@@ -14,12 +15,12 @@ class Dish {
   final int protein;
   final int fats;
   final int carbs;
-
   final int? totalMissingCost;
   late final ProductGroup generalProductGroup;
 
   Dish({
     required this.title,
+    required this.mealType,
     required this.products,
     required this.calories,
     required this.restrictions,
@@ -36,6 +37,7 @@ class Dish {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'title': title,
+      'mealType': mealType,
       'products': products.map((x) => x.toMap()).toList(),
       'calories': calories,
       'restrictions': restrictions.toList(),
@@ -65,16 +67,13 @@ class Dish {
 
   @override
   String toString() {
-    return 'title: $title'
-        'calories: $calories'
-        'protein: $protein'
-        'fats: $fats'
-        'carbs: $carbs';
+    return title;
   }
 
   factory Dish.fromMap(Map<String, dynamic> map) {
     return Dish(
       title: map['title'] as String,
+      mealType: map['mealType'] as String,
       products: List<Product>.from(
         (map['products'] as List<dynamic>)
             .map((x) => Product.fromMap(x as Map<String, dynamic>)),
@@ -102,6 +101,7 @@ class Dish {
 
   Dish copyWith({
     String? title,
+    String? mealType,
     List<Product>? products,
     int? calories,
     Set<String>? restrictions,
@@ -116,6 +116,7 @@ class Dish {
   }) {
     return Dish(
       title: title ?? this.title,
+      mealType: mealType ?? this.mealType,
       products: products ?? this.products,
       calories: calories ?? this.calories,
       restrictions: restrictions ?? this.restrictions,

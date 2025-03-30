@@ -1,22 +1,19 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:naturly/src/core/domain/models/day_ration_model.dart';
-import 'package:naturly/src/core/domain/models/dish_model.dart';
-import 'package:naturly/src/core/domain/models/food_enums.dart';
-import 'package:naturly/src/core/domain/models/human_profile.dart';
-import 'package:naturly/src/core/domain/models/product_model.dart';
+import 'package:naturly/src/features/schedule/domain/models/day_ration_model.dart';
+import 'package:naturly/src/features/schedule/domain/models/dish_model.dart';
+import 'package:naturly/src/features/schedule/domain/models/food_enums.dart';
+import 'package:naturly/src/features/schedule/domain/models/human_profile.dart';
+import 'package:naturly/src/features/schedule/domain/models/product_model.dart';
 
 class FoodService {
   List<DayRation> generateWeekRation(
-    List<Dish>? availableMorningDishes,
-    List<Dish>? availableLunchDishes,
-    List<Dish>? availableSnackDishes,
-    List<Dish>? availableDinnerDishes,
-    List<Dish> otherMorningDishes,
-    List<Dish> otherLunchDishes,
-    List<Dish> otherSnackDishes,
-    List<Dish> otherDinnerDishes,
+    List<Product> availableProducts,
+    List<Dish> morningDishes,
+    List<Dish> lunchDishes,
+    List<Dish> snackDishes,
+    List<Dish> dinnerDishes,
     Human person,
   ) {
     final pfc = person.calculateWeeklyMacronutrients();
@@ -27,7 +24,8 @@ class FoodService {
     double caloriesLeft = ccals;
 
     List<DayRation> weekRation = [];
-    Map<Dish, int> selectedDishes = {};
+    Map<String, int> selectedDishes = {};
+    var copyAvilableProducts = List<Product>.from(availableProducts);
 
     Map<ProductGroup, int> groupFrequency = {
       ProductGroup.grainsAndPotatoes: 4,
@@ -40,124 +38,143 @@ class FoodService {
     };
 
     for (int day = 0; day < 7; day++) {
-      String dayOfWeek = _getDayOfWeek(day);
+      DateTime dayDate = DateTime.now().add(Duration(days: day));
 
-      Dish morningDish = _selectDishWithGroupFrequency(
-        (availableMorningDishes?.isNotEmpty ?? false)
-            ? availableMorningDishes!
-            : otherMorningDishes,
-        proteinLeft,
-        fatsLeft,
-        carbsLeft,
-        caloriesLeft,
-        day,
-        selectedDishes,
-        groupFrequency,
-      );
+      final availableMorningDishes =
+          findAvailableDishes(copyAvilableProducts, morningDishes, {"Глютен"});
+      final availableLunchdishes =
+          findAvailableDishes(copyAvilableProducts, lunchDishes, null);
+      final availableSnackishes =
+          findAvailableDishes(copyAvilableProducts, snackDishes, null);
+      final availableDinnerDishes =
+          findAvailableDishes(copyAvilableProducts, dinnerDishes, null);
 
-      proteinLeft -= morningDish.protein;
-      fatsLeft -= morningDish.fats;
-      carbsLeft -= morningDish.carbs;
-      caloriesLeft -= morningDish.calories;
+      Dish? morningDish = morningDishes.isNotEmpty
+          ? _selectDishWithGroupFrequency(
+              [...availableMorningDishes, ...morningDishes],
+              proteinLeft,
+              fatsLeft,
+              carbsLeft,
+              caloriesLeft,
+              day,
+              selectedDishes,
+              groupFrequency,
+            )
+          : null;
 
-      Dish lunchDish;
+      proteinLeft -= morningDish?.protein ?? 0;
+      fatsLeft -= morningDish?.fats ?? 0;
+      carbsLeft -= morningDish?.carbs ?? 0;
+      caloriesLeft -= morningDish?.calories ?? 0;
+      copyAvilableProducts =
+          _updateAvailableProducts(morningDish, copyAvilableProducts);
+
+      Dish? lunchDish;
 
       if (day == 0) {
-        lunchDish = _selectDishWithGroupFrequency(
-          (availableLunchDishes?.isNotEmpty ?? false)
-              ? availableLunchDishes!
-              : otherLunchDishes,
-          proteinLeft,
-          fatsLeft,
-          carbsLeft,
-          caloriesLeft,
-          day,
-          selectedDishes,
-          groupFrequency,
-        );
+        lunchDish = lunchDishes.isNotEmpty
+            ? _selectDishWithGroupFrequency(
+                [...availableLunchdishes, ...lunchDishes],
+                proteinLeft,
+                fatsLeft,
+                carbsLeft,
+                caloriesLeft,
+                day,
+                selectedDishes,
+                groupFrequency,
+              )
+            : null;
+        copyAvilableProducts =
+            _updateAvailableProducts(lunchDish, copyAvilableProducts);
       } else {
         if (weekRation.elementAtOrNull(day) != null) {
           lunchDish = weekRation[day].lunchDish!;
         } else {
-          lunchDish = _selectDishWithGroupFrequency(
-            (availableLunchDishes?.isNotEmpty ?? false)
-                ? availableLunchDishes!
-                : otherLunchDishes,
-            proteinLeft,
-            fatsLeft,
-            carbsLeft,
-            caloriesLeft,
-            day,
-            selectedDishes,
-            groupFrequency,
-          );
+          lunchDish = lunchDishes.isNotEmpty
+              ? _selectDishWithGroupFrequency(
+                  [...availableLunchdishes, ...lunchDishes],
+                  proteinLeft,
+                  fatsLeft,
+                  carbsLeft,
+                  caloriesLeft,
+                  day,
+                  selectedDishes,
+                  groupFrequency,
+                )
+              : null;
         }
       }
 
-      proteinLeft -= lunchDish.protein;
-      fatsLeft -= lunchDish.fats;
-      carbsLeft -= lunchDish.carbs;
-      caloriesLeft -= lunchDish.calories;
+      proteinLeft -= lunchDish?.protein ?? 0;
+      fatsLeft -= lunchDish?.fats ?? 0;
+      carbsLeft -= lunchDish?.carbs ?? 0;
+      caloriesLeft -= lunchDish?.calories ?? 0;
+      copyAvilableProducts =
+          _updateAvailableProducts(lunchDish, copyAvilableProducts);
 
-      Dish snackDish = _selectDishWithGroupFrequency(
-        (availableSnackDishes?.isNotEmpty ?? false)
-            ? availableSnackDishes!
-            : otherSnackDishes,
-        proteinLeft,
-        fatsLeft,
-        carbsLeft,
-        caloriesLeft,
-        day,
-        selectedDishes,
-        groupFrequency,
-      );
+      Dish? snackDish = snackDishes.isNotEmpty
+          ? _selectDishWithGroupFrequency(
+              [...availableSnackishes, ...snackDishes],
+              proteinLeft,
+              fatsLeft,
+              carbsLeft,
+              caloriesLeft,
+              day,
+              selectedDishes,
+              groupFrequency,
+            )
+          : null;
 
-      proteinLeft -= snackDish.protein;
-      fatsLeft -= snackDish.fats;
-      carbsLeft -= snackDish.carbs;
-      caloriesLeft -= snackDish.calories;
+      proteinLeft -= snackDish?.protein ?? 0;
+      fatsLeft -= snackDish?.fats ?? 0;
+      carbsLeft -= snackDish?.carbs ?? 0;
+      caloriesLeft -= snackDish?.calories ?? 0;
+      copyAvilableProducts =
+          _updateAvailableProducts(snackDish, copyAvilableProducts);
 
-      Dish dinnerDish = _selectDishWithGroupFrequency(
-        (availableDinnerDishes?.isNotEmpty ?? false)
-            ? availableDinnerDishes!
-            : otherDinnerDishes,
-        proteinLeft,
-        fatsLeft,
-        carbsLeft,
-        caloriesLeft,
-        day,
-        selectedDishes,
-        groupFrequency,
-      );
+      Dish? dinnerDish = dinnerDishes.isNotEmpty
+          ? _selectDishWithGroupFrequency(
+              [...availableDinnerDishes, ...dinnerDishes],
+              proteinLeft,
+              fatsLeft,
+              carbsLeft,
+              caloriesLeft,
+              day,
+              selectedDishes,
+              groupFrequency,
+            )
+          : null;
 
-      proteinLeft -= dinnerDish.protein;
-      fatsLeft -= dinnerDish.fats;
-      carbsLeft -= dinnerDish.carbs;
-      caloriesLeft -= dinnerDish.calories;
+      proteinLeft -= dinnerDish?.protein ?? 0;
+      fatsLeft -= dinnerDish?.fats ?? 0;
+      carbsLeft -= dinnerDish?.carbs ?? 0;
+      caloriesLeft -= dinnerDish?.calories ?? 0;
+      copyAvilableProducts =
+          _updateAvailableProducts(dinnerDish, copyAvilableProducts);
 
       if (weekRation.elementAtOrNull(day) != null) {
         weekRation[day] = weekRation[day].copyWith(
-            day: dayOfWeek,
+            day: dayDate,
             dayIndex: day,
             morningDish: morningDish,
             snackDish: snackDish,
             dinnerDish: dinnerDish,
-            totalCcal: dinnerDish.calories +
-                snackDish.calories +
-                lunchDish.calories +
-                morningDish.calories);
+            totalCcal: (dinnerDish?.calories ?? 0) +
+                (snackDish?.calories ?? 0) +
+                (lunchDish?.calories ?? 0) +
+                (morningDish?.calories ?? 0));
       } else {
         weekRation.add(DayRation(
-            day: dayOfWeek,
+            day: dayDate,
             dayIndex: day,
             morningDish: morningDish,
             lunchDish: lunchDish,
             snackDish: snackDish,
             dinnerDish: dinnerDish,
-            totalCcal: dinnerDish.calories +
-                snackDish.calories +
-                lunchDish.calories +
-                morningDish.calories));
+            totalCcal: (dinnerDish?.calories ?? 0) +
+                (snackDish?.calories ?? 0) +
+                (lunchDish?.calories ?? 0) +
+                (morningDish?.calories ?? 0)));
         _handleSoupDish(day, weekRation, lunchDish);
       }
     }
@@ -166,92 +183,113 @@ class FoodService {
   }
 
   DayRation generateDayRation(
-    List<Dish>? availableMorningDishes,
-    List<Dish>? availableLunchDishes,
-    List<Dish>? availableSnackDishes,
-    List<Dish>? availableDinnerDishes,
-    List<Dish> otherMorningDishes,
-    List<Dish> otherLunchDishes,
-    List<Dish> otherSnackDishes,
-    List<Dish> otherDinnerDishes,
+    List<Product> availableProducts,
+    List<Dish> morningDishes,
+    List<Dish> lunchDishes,
+    List<Dish> snackDishes,
+    List<Dish> dinnerDishes,
     String day,
     int dayIndex,
     Human person,
   ) {
     final pfc = person.calculateWeeklyMacronutrients();
     final ccals = person.calculateWeeklyCalories();
+    var copyAvilableProducts = List<Product>.from(availableProducts);
+    DateTime dayDate = DateTime.now();
+
     double proteinLeft = pfc['protein']!;
     double fatsLeft = pfc['fats']!;
     double carbsLeft = pfc['carbs']!;
     double caloriesLeft = ccals;
 
-    Dish morningDish = _selectDish(
-      (availableMorningDishes?.isNotEmpty ?? false)
-          ? availableMorningDishes!
-          : otherMorningDishes,
-      proteinLeft,
-      fatsLeft,
-      carbsLeft,
-      caloriesLeft,
-    );
-    proteinLeft -= morningDish.protein;
-    fatsLeft -= morningDish.fats;
-    carbsLeft -= morningDish.carbs;
-    caloriesLeft -= morningDish.calories;
+    final availableMorningDishes =
+        findAvailableDishes(copyAvilableProducts, morningDishes, {"Глютен"});
+    final availableLunchdishes =
+        findAvailableDishes(copyAvilableProducts, lunchDishes, null);
+    final availableSnackishes =
+        findAvailableDishes(copyAvilableProducts, snackDishes, null);
+    final availableDinnerDishes =
+        findAvailableDishes(copyAvilableProducts, dinnerDishes, null);
 
-    Dish lunchDish = _selectDish(
-      (availableLunchDishes?.isNotEmpty ?? false)
-          ? availableLunchDishes!
-          : otherLunchDishes,
-      proteinLeft,
-      fatsLeft,
-      carbsLeft,
-      caloriesLeft,
-    );
-    proteinLeft -= lunchDish.protein;
-    fatsLeft -= lunchDish.fats;
-    carbsLeft -= lunchDish.carbs;
-    caloriesLeft -= lunchDish.calories;
+    Dish? morningDish = morningDishes.isNotEmpty
+        ? _selectDish(
+            [...availableMorningDishes, ...morningDishes],
+            proteinLeft,
+            fatsLeft,
+            carbsLeft,
+            caloriesLeft,
+          )
+        : null;
 
-    Dish snackDish = _selectDish(
-      (availableSnackDishes?.isNotEmpty ?? false)
-          ? availableSnackDishes!
-          : otherSnackDishes,
-      proteinLeft,
-      fatsLeft,
-      carbsLeft,
-      caloriesLeft,
-    );
-    proteinLeft -= snackDish.protein;
-    fatsLeft -= snackDish.fats;
-    carbsLeft -= snackDish.carbs;
-    caloriesLeft -= snackDish.calories;
+    proteinLeft -= morningDish?.protein ?? 0;
+    fatsLeft -= morningDish?.fats ?? 0;
+    carbsLeft -= morningDish?.carbs ?? 0;
+    caloriesLeft -= morningDish?.calories ?? 0;
+    copyAvilableProducts =
+        _updateAvailableProducts(morningDish, copyAvilableProducts);
 
-    Dish dinnerDish = _selectDish(
-      (availableDinnerDishes?.isNotEmpty ?? false)
-          ? availableDinnerDishes!
-          : otherDinnerDishes,
-      proteinLeft,
-      fatsLeft,
-      carbsLeft,
-      caloriesLeft,
-    );
-    proteinLeft -= dinnerDish.protein;
-    fatsLeft -= dinnerDish.fats;
-    carbsLeft -= dinnerDish.carbs;
-    caloriesLeft -= dinnerDish.calories;
+    Dish? lunchDish = lunchDishes.isNotEmpty
+        ? _selectDish(
+            [...availableLunchdishes, ...lunchDishes],
+            proteinLeft,
+            fatsLeft,
+            carbsLeft,
+            caloriesLeft,
+          )
+        : null;
+
+    proteinLeft -= lunchDish?.protein ?? 0;
+    fatsLeft -= lunchDish?.fats ?? 0;
+    carbsLeft -= lunchDish?.carbs ?? 0;
+    caloriesLeft -= lunchDish?.calories ?? 0;
+    copyAvilableProducts =
+        _updateAvailableProducts(lunchDish, copyAvilableProducts);
+
+    Dish? snackDish = snackDishes.isNotEmpty
+        ? _selectDish(
+            [...availableSnackishes, ...snackDishes],
+            proteinLeft,
+            fatsLeft,
+            carbsLeft,
+            caloriesLeft,
+          )
+        : null;
+
+    proteinLeft -= snackDish?.protein ?? 0;
+    fatsLeft -= snackDish?.fats ?? 0;
+    carbsLeft -= snackDish?.carbs ?? 0;
+    caloriesLeft -= snackDish?.calories ?? 0;
+    copyAvilableProducts =
+        _updateAvailableProducts(snackDish, copyAvilableProducts);
+
+    Dish? dinnerDish = dinnerDishes.isNotEmpty
+        ? _selectDish(
+            [...availableDinnerDishes, ...dinnerDishes],
+            proteinLeft,
+            fatsLeft,
+            carbsLeft,
+            caloriesLeft,
+          )
+        : null;
+
+    proteinLeft -= dinnerDish?.protein ?? 0;
+    fatsLeft -= dinnerDish?.fats ?? 0;
+    carbsLeft -= dinnerDish?.carbs ?? 0;
+    caloriesLeft -= dinnerDish?.calories ?? 0;
+    copyAvilableProducts =
+        _updateAvailableProducts(dinnerDish, copyAvilableProducts);
 
     return DayRation(
-        day: day,
+        day: dayDate,
         dayIndex: dayIndex,
         morningDish: morningDish,
         lunchDish: lunchDish,
         snackDish: snackDish,
         dinnerDish: dinnerDish,
-        totalCcal: dinnerDish.calories +
-            snackDish.calories +
-            lunchDish.calories +
-            morningDish.calories);
+        totalCcal: (dinnerDish?.calories ?? 0) +
+            (snackDish?.calories ?? 0) +
+            (lunchDish?.calories ?? 0) +
+            (morningDish?.calories ?? 0));
   }
 
   List<Dish> findAvailableDishes(
@@ -269,9 +307,12 @@ class FoodService {
       }
 
       final checkedDish = checkAvailableProducts(dish, availableProducts);
+
       bool allProductsAvailable = dish.products.every((product) {
-        return availableProducts
-            .any((availableProduct) => availableProduct.title == product.title);
+        return availableProducts.any((availableProduct) {
+          return availableProduct.title == product.title &&
+              availableProduct.quantity <= product.quantity;
+        });
       });
 
       if (allProductsAvailable) {
@@ -310,7 +351,10 @@ class FoodService {
         missingProducts: productsNeeded,
       );
     } else {
-      return currentDish;
+      return currentDish.copyWith(
+        totalMissingCost: currentDish.totalPrice,
+        missingProducts: currentDish.products,
+      );
     }
   }
 
@@ -321,16 +365,16 @@ class FoodService {
     double carbsLeft,
     double caloriesLeft,
     int currentDay,
-    final Map<Dish, int> selectedDayDishes,
+    final Map<String, int> selectedDayDishes,
     final Map<ProductGroup, int> groupFrequency,
   ) {
     Dish selectedDish;
 
     while (true) {
       selectedDish = dishes[Random().nextInt(dishes.length)];
-      final lastAddedDay = selectedDayDishes[selectedDish] ?? -100;
+      final lastAddedDay = selectedDayDishes[selectedDish.title] ?? -100;
 
-      if (selectedDayDishes.containsKey(selectedDish) &&
+      if (selectedDayDishes.containsKey(selectedDish.title) &&
           (currentDay - lastAddedDay) < 3) {
         continue;
       }
@@ -344,9 +388,9 @@ class FoodService {
       caloriesLeft -= selectedDish.calories;
 
       if (selectedDish.generalProductGroup == ProductGroup.soupsAndBroths) {
-        selectedDayDishes[selectedDish] = currentDay + 3;
+        selectedDayDishes[selectedDish.title] = currentDay + 3;
       } else {
-        selectedDayDishes[selectedDish] = currentDay;
+        selectedDayDishes[selectedDish.title] = currentDay;
       }
       break;
     }
@@ -374,12 +418,35 @@ class FoodService {
     return dishes[randomIndex];
   }
 
+  List<Product> _updateAvailableProducts(
+      Dish? dish, List<Product> availableProducts) {
+    if (dish != null && dish.missingProducts.isNotEmpty) {
+      for (final product in dish.products) {
+        final availableProduct = availableProducts
+            .firstWhereOrNull((element) => element.title == product.title);
+
+        if (availableProduct != null &&
+            availableProduct.quantity >= product.quantity) {
+          final updatedProduct = availableProduct.copyWith(
+              quantity: availableProduct.quantity - product.quantity);
+
+          availableProducts = availableProducts.map((p) {
+            return p.title == availableProduct.title ? updatedProduct : p;
+          }).toList();
+        }
+      }
+    }
+
+    return availableProducts;
+  }
+
   void _handleSoupDish(
     int day,
     List<DayRation> weekRation,
-    Dish lunchDish,
+    Dish? lunchDish,
   ) {
-    if (lunchDish.generalProductGroup == ProductGroup.soupsAndBroths) {
+    if (lunchDish != null &&
+        lunchDish.generalProductGroup == ProductGroup.soupsAndBroths) {
       int daysToFill = 0;
 
       if (day + 1 < 7 && weekRation.length <= day + 1) {

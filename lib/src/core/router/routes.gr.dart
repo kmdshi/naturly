@@ -18,9 +18,9 @@ import 'package:naturly/src/features/account/presentation/widgets/profile_data_f
 import 'package:naturly/src/features/account/presentation/widgets/registration_screen.dart'
     as _i5;
 import 'package:naturly/src/features/home/widget/home_screen.dart' as _i2;
-import 'package:naturly/src/features/schedule/presentation/generate_schedule_screen.dart'
+import 'package:naturly/src/features/schedule/presentation/widgets/generate_schedule_screen.dart'
     as _i1;
-import 'package:naturly/src/features/schedule/presentation/schedule_screen.dart'
+import 'package:naturly/src/features/schedule/presentation/widgets/schedule_screen.dart'
     as _i7;
 import 'package:naturly/src/features/settings/presentation/settings_screen.dart'
     as _i8;

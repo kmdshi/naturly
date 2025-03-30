@@ -11,6 +11,7 @@ class Product {
   final int carbs;
   final int ccal;
   final ProductGroup productGroup;
+  final int quantity;
   final FishType? fishType;
   final ProteinType? proteinType;
   final MeatType? meatType;
@@ -23,6 +24,7 @@ class Product {
     required this.carbs,
     required this.ccal,
     required this.productGroup,
+    required this.quantity,
     this.fishType,
     this.proteinType,
     this.meatType,
@@ -45,10 +47,11 @@ class Product {
       'fats': fats,
       'carbs': carbs,
       'ccal': ccal,
-      'productGroup': productGroup,
-      'fishType': fishType?.toMap(),
-      'proteinType': proteinType?.toMap(),
-      'meatType': meatType?.toMap(),
+      'productGroup': 'temp',
+      'quantity': quantity,
+      // 'fishType': fishType?.toMap(),
+      // 'proteinType': proteinType?.toMap(),
+      // 'meatType': meatType?.toMap(),
     };
   }
 
@@ -71,6 +74,7 @@ class Product {
       meatType: map['meatType'] != null
           ? MeatTypeExtension.fromMap(map['meatType'] as String)
           : null,
+      quantity: map['quantity'] as int,
     );
   }
 
@@ -90,6 +94,7 @@ class Product {
     FishType? fishType,
     ProteinType? proteinType,
     MeatType? meatType,
+    int? quantity,
   }) {
     return Product(
       title: title ?? this.title,
@@ -102,6 +107,7 @@ class Product {
       fishType: fishType ?? this.fishType,
       proteinType: proteinType ?? this.proteinType,
       meatType: meatType ?? this.meatType,
+      quantity: quantity ?? this.quantity,
     );
   }
 }

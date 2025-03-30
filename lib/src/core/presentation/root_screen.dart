@@ -4,7 +4,7 @@ import 'package:flutter_side_menu/flutter_side_menu.dart';
 import 'package:naturly/src/core/services/responsive_detection.dart';
 import 'package:naturly/src/features/analysis/presentation/analysis_screen.dart';
 import 'package:naturly/src/features/home/widget/home_screen.dart';
-import 'package:naturly/src/features/schedule/presentation/schedule_screen.dart';
+import 'package:naturly/src/features/schedule/presentation/widgets/schedule_screen.dart';
 import 'package:naturly/src/features/settings/presentation/settings_screen.dart';
 
 @RoutePage()

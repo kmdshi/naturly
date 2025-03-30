@@ -43,7 +43,7 @@ enum ProteinType {
 
 extension MeatTypeExtension on MeatType {
   String toMap() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 
   static MeatType fromMap(String value) {
@@ -54,7 +54,7 @@ extension MeatTypeExtension on MeatType {
 
 extension FishTypeExtension on FishType {
   String toMap() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 
   static FishType fromMap(String value) {
@@ -65,7 +65,7 @@ extension FishTypeExtension on FishType {
 
 extension ProteinTypeExtension on ProteinType {
   String toMap() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 
   static ProteinType fromMap(String value) {
@@ -76,7 +76,7 @@ extension ProteinTypeExtension on ProteinType {
 
 extension ProductGroupExtension on ProductGroup {
   String toMap() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 
   static ProductGroup fromMap(String value) {
