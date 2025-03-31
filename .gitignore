@@ -44,4 +44,22 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-*.env
+# Codegen 
+*.*.dart
+generated_*
+lib/src/core/constant/localization/generated/
+lib/src/core/constant/generated/
+
+pubspec.lock
+.metadata
+
+# FVM Version Cache
+.fvm/
+
+# Test reports
+reports/
+coverage/
+**/coverage/
+tests.json
+
+.dev.env
