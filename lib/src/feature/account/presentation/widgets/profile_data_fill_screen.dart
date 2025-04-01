@@ -1,5 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naturly/src/core/common/models/human_profile.dart';
+import 'package:naturly/src/core/common/router/router.gr.dart';
+import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/option_widget.dart';
 
 @RoutePage()
@@ -11,39 +15,125 @@ class ProfileDataFillScreen extends StatefulWidget {
 }
 
 class _ProfileDataFillScreenState extends State<ProfileDataFillScreen> {
+  ValueNotifier<String> ageNotifier = ValueNotifier<String>('');
+  ValueNotifier<String> weightNotifier = ValueNotifier<String>('');
+  ValueNotifier<String> heightNotifier = ValueNotifier<String>('');
+  ValueNotifier<String> activityLevelNotifier = ValueNotifier<String>(
+    'Sedentary',
+  );
+  ValueNotifier<String> sexNotifier = ValueNotifier<String>('');
+
+  ValueNotifier<String> restrictionsNotifier = ValueNotifier<String>('');
+  ValueNotifier<String> goalNotifier = ValueNotifier<String>('Поддержать');
+
+  @override
+  void dispose() {
+    ageNotifier.dispose();
+    weightNotifier.dispose();
+    heightNotifier.dispose();
+    activityLevelNotifier.dispose();
+    goalNotifier.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
-        children: [
-          Text(
-              'Давайте заполним данные о вас...(все анонимно, они пригодятся для всевозможных рассчетов.)'),
-          OptionWidget(
-            title: 'Сколько вы весите?',
-            isTextQuestion: true,
-          ),
-          OptionWidget(
-            title: 'Сколько вы весите?',
-            isTextQuestion: true,
-          ),
-          OptionWidget(
-            title: 'Сколько вы весите?',
-            isTextQuestion: true,
-          ),
-          OptionWidget(
-              title: 'Уровень вашей активности в течение дня?',
-              answers: [
-                'Очень мало',
-                'Умеренная',
-                'Средняя',
-                'Высокая',
-              ]),
-          //TODO: сделать чекбокс выборы:
-          // OptionWidget(
-          //   title: 'Есть ли ограничения?',
+    return Scaffold(
+      body: BlocBuilder<AccountBloc, AccountState>(
+        builder: (context, state) {
+          if (state is AccountAuthorized) {
+            Future.microtask(() {
+              context.router.pushAndPopUntil(
+                HomeTab(),
+                predicate: (route) => false,
+              );
+            });
+            return SizedBox.shrink();
+          } else {
+            return Column(
+              children: [
+                Text(
+                  'Давайте заполним данные о вас...(все анонимно, они пригодятся для всевозможных рассчетов.)',
+                ),
+                OptionWidget(
+                  title: 'Какой ваш возраст?',
+                  isTextQuestion: true,
+                  value: ageNotifier,
+                ),
+                OptionWidget(
+                  title: 'Сколько вы весите?',
+                  isTextQuestion: true,
+                  value: weightNotifier,
+                ),
+                OptionWidget(
+                  title: 'Какой у вас рост?',
+                  isTextQuestion: true,
+                  value: heightNotifier,
+                ),
+                OptionWidget(
+                  title: 'Уровень вашей активности в течение дня?',
+                  answers: [
+                    'Sedentary',
+                    'Lightly active',
+                    'Moderately active',
+                    'Very active',
+                    'Extra active',
+                  ],
+                  value: activityLevelNotifier,
+                ),
+                OptionWidget(
+                  title: 'Ваш пол?',
+                  answers: ['Мужской', 'Женский'],
+                  value: sexNotifier,
+                ),
+                OptionWidget(
+                  title: 'Какие у вас ограничения',
+                  isRestrictions: true,
+                  value: restrictionsNotifier,
+                ),
+                OptionWidget(
+                  title: 'Ваша цель?',
+                  answers: ['Набрать', 'Сбросить', 'Поддержать'],
+                  value: goalNotifier,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (ageNotifier.value.isEmpty ||
+                        weightNotifier.value.isEmpty ||
+                        heightNotifier.value.isEmpty ||
+                        activityLevelNotifier.value.isEmpty ||
+                        sexNotifier.value.isEmpty ||
+                        goalNotifier.value.isEmpty) {
+                      print('Все поля должны быть заполнены');
+                      return;
+                    }
 
-          // ),
-        ],
+                    final selectedRestrictions =
+                        restrictionsNotifier.value
+                            .split(',')
+                            .map((restriction) => restriction.trim())
+                            .where((restriction) => restriction.isNotEmpty)
+                            .toSet();
+
+                    final user = Human(
+                      age: int.parse(ageNotifier.value),
+                      height: int.parse(heightNotifier.value),
+                      weight: int.parse(weightNotifier.value),
+                      goal: goalNotifier.value,
+                      restrictions: selectedRestrictions,
+                      sex: sexNotifier.value,
+                      activityLevel: activityLevelNotifier.value,
+                    );
+                    context.read<AccountBloc>().add(
+                      AccountFillEvent(user: user),
+                    );
+                  },
+                  child: Text('Дальше'),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }

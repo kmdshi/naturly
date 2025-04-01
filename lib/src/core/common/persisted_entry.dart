@@ -1,6 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 abstract class PersistedEntry<T extends Object> {
   const PersistedEntry();
 
@@ -10,12 +9,16 @@ abstract class PersistedEntry<T extends Object> {
 
   Future<void> remove();
 
-  Future<void> setIfNullRemove(T? value) => value == null ? remove() : set(value);
+  Future<void> setIfNullRemove(T? value) =>
+      value == null ? remove() : set(value);
 }
 
-
-abstract class SharedPreferencesEntry<T extends Object> extends PersistedEntry<T> {
-  const SharedPreferencesEntry({required this.sharedPreferences, required this.key});
+abstract class SharedPreferencesEntry<T extends Object>
+    extends PersistedEntry<T> {
+  const SharedPreferencesEntry({
+    required this.sharedPreferences,
+    required this.key,
+  });
 
   final SharedPreferencesAsync sharedPreferences;
 
@@ -23,7 +26,10 @@ abstract class SharedPreferencesEntry<T extends Object> extends PersistedEntry<T
 }
 
 class IntPreferencesEntry extends SharedPreferencesEntry<int> {
-  const IntPreferencesEntry({required super.sharedPreferences, required super.key});
+  const IntPreferencesEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   @override
   Future<int?> read() => sharedPreferences.getInt(key);
@@ -40,7 +46,10 @@ class IntPreferencesEntry extends SharedPreferencesEntry<int> {
 }
 
 class StringPreferencesEntry extends SharedPreferencesEntry<String> {
-  const StringPreferencesEntry({required super.sharedPreferences, required super.key});
+  const StringPreferencesEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   @override
   Future<String?> read() => sharedPreferences.getString(key);
@@ -57,7 +66,10 @@ class StringPreferencesEntry extends SharedPreferencesEntry<String> {
 }
 
 class BoolPreferencesEntry extends SharedPreferencesEntry<bool> {
-  const BoolPreferencesEntry({required super.sharedPreferences, required super.key});
+  const BoolPreferencesEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   @override
   Future<bool?> read() => sharedPreferences.getBool(key);
@@ -74,7 +86,10 @@ class BoolPreferencesEntry extends SharedPreferencesEntry<bool> {
 }
 
 class DoublePreferencesEntry extends SharedPreferencesEntry<double> {
-  const DoublePreferencesEntry({required super.sharedPreferences, required super.key});
+  const DoublePreferencesEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   @override
   Future<double?> read() => sharedPreferences.getDouble(key);
@@ -91,7 +106,10 @@ class DoublePreferencesEntry extends SharedPreferencesEntry<double> {
 }
 
 class StringListPreferencesEntry extends SharedPreferencesEntry<List<String>> {
-  const StringListPreferencesEntry({required super.sharedPreferences, required super.key});
+  const StringListPreferencesEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   @override
   Future<List<String>?> read() => sharedPreferences.getStringList(key);

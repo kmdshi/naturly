@@ -1,8 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naturly/src/core/common/features/initialization/widget/dependencies_scope.dart';
 import 'package:naturly/src/core/common/models/food_enums.dart';
 import 'package:naturly/src/core/common/models/product_model.dart';
-import 'package:naturly/src/feature/schedule/data/data_source/remote/schedule_remote_ds.dart';
+import 'package:naturly/src/core/common/router/router.gr.dart';
+import 'package:naturly/src/core/widget/alert_snackbar.dart';
+import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bloc/userbase_bloc.dart';
+import 'package:naturly/src/feature/schedule/presentation/widgets/dish_form_widget.dart';
+import 'package:naturly/src/feature/schedule/presentation/widgets/product_form_widget.dart';
 
 @RoutePage()
 class UserBaseScreen extends StatefulWidget {
@@ -13,124 +19,127 @@ class UserBaseScreen extends StatefulWidget {
 }
 
 class _UserBaseScreenState extends State<UserBaseScreen> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _proteinController = TextEditingController();
-  final TextEditingController _fatsController = TextEditingController();
-  final TextEditingController _carbsController = TextEditingController();
-  final TextEditingController _ccalController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
-  ProductGroup _selectedGroup = ProductGroup.grainsAndPotatoes;
-  var text = '';
+  @override
+  void initState() {
+    context.read<UserbaseBloc>().add(UserbaseGetUserDataEvent());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Продукты и блюда')),
+      appBar: AppBar(
+        title: Text('Продукты и блюда'),
+        leading: IconButton(
+          onPressed:
+              () => context.router.pushAndPopUntil(
+                ScheduleRoute(),
+                predicate: (route) => false,
+              ),
+          icon: Icon(Icons.arrow_left),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showProductDialog(),
+        onPressed: () {
+          final state = context.read<UserbaseBloc>().state;
+
+          if (state is UserbaseLoaded) {
+            final products = state.products;
+
+            _showProductDialog(products);
+          }
+        },
         child: Icon(Icons.add),
       ),
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () async {},
-            child: Text('Получить продукты'),
-          ),
-          Text(text),
-        ],
+      body: BlocBuilder<UserbaseBloc, UserbaseState>(
+        builder: (context, state) {
+          if (state is UserbaseInitial) {
+            return Center(child: Text('Нет данных'));
+          } else if (state is UserbaseLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is UserbaseLoaded) {
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      ...state.products.map(
+                        (product) => ListTile(
+                          title: Text(product.title),
+                          subtitle: Text('Цена: ${product.price} руб.'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      ...state.dishes.map(
+                        (dish) => ListTile(
+                          title: Text(dish.title),
+                          subtitle: Text('Цена: ${dish.totalPrice} руб.'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else if (state is UserbaseFailure) {
+            DependenciesScope.of(context).logger.error(state.message);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showCustomSnackBar(
+                context,
+                'Произошла ошибка непредвиденная ошибка. Попробуйте позже. Если она долго повторяется свяжитесь с разработчиком.',
+              );
+            });
+
+            Future.delayed(Duration(milliseconds: 100), () {
+              context.read<UserbaseBloc>().add(UserbaseGetUserDataEvent());
+            });
+
+            return SizedBox.shrink();
+          }
+          return SizedBox.shrink();
+        },
       ),
     );
   }
 
-  Future<void> _showProductDialog() async {
+  Future<void> _showProductDialog(final List<Product> products) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Добавить продукт'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  controller: _titleController,
-                  decoration: InputDecoration(labelText: 'Название'),
-                ),
-                TextField(
-                  controller: _priceController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Цена'),
-                ),
-                TextField(
-                  controller: _proteinController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Белки'),
-                ),
-                TextField(
-                  controller: _fatsController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Жиры'),
-                ),
-                TextField(
-                  controller: _carbsController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Углеводы'),
-                ),
-                TextField(
-                  controller: _ccalController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Калории'),
-                ),
-                TextField(
-                  controller: _quantityController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Количество'),
-                ),
-                DropdownButton<ProductGroup>(
-                  value: _selectedGroup,
-                  onChanged: (ProductGroup? newValue) {
-                    setState(() {
-                      _selectedGroup = newValue!;
-                    });
-                  },
-                  items:
-                      ProductGroup.values.map((ProductGroup group) {
-                        return DropdownMenuItem<ProductGroup>(
-                          value: group,
-                          child: Text(group.toString().split('.').last),
-                        );
-                      }).toList(),
-                ),
-              ],
+        var height = MediaQuery.of(context).size.height;
+        var width = MediaQuery.of(context).size.width;
+
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: Container(
+            width: width / 3,
+            height: height / 2,
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TabBar(tabs: [Tab(text: 'Продукт'), Tab(text: 'Блюдо')]),
+                  Container(
+                    height: 300,
+                    child: TabBarView(
+                      children: [
+                        ProductFormWidget(),
+                        DishFormWidget(products: products),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Отмена'),
-            ),
-            TextButton(
-              onPressed: () {
-                final newProduct = Product(
-                  title: _titleController.text,
-                  price: int.tryParse(_priceController.text) ?? 0,
-                  protein: int.tryParse(_proteinController.text) ?? 0,
-                  fats: int.tryParse(_fatsController.text) ?? 0,
-                  carbs: int.tryParse(_carbsController.text) ?? 0,
-                  ccal: int.tryParse(_ccalController.text) ?? 0,
-                  productGroup: _selectedGroup,
-                  quantity: int.tryParse(_quantityController.text) ?? 0,
-                  fishType: null,
-                  proteinType: null,
-                  meatType: null,
-                );
-                Navigator.of(context).pop();
-              },
-              child: Text('Добавить'),
-            ),
-          ],
         );
       },
     );

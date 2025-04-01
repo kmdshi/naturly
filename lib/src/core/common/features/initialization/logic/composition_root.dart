@@ -1,5 +1,6 @@
 import 'package:clock/clock.dart';
 import 'package:logger/logger.dart';
+import 'package:naturly/src/core/common/cubit/auth_cubit.dart';
 import 'package:naturly/src/core/common/services/food_service.dart';
 import 'package:naturly/src/feature/account/data/data_source/remote/supabase_account_ds.dart';
 import 'package:naturly/src/feature/account/data/repository/account_init_repository.dart';
@@ -9,6 +10,9 @@ import 'package:naturly/src/feature/schedule/data/repository/schedule_repository
 import 'package:naturly/src/feature/schedule/data/repository/user_base_repository.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bloc/userbase_bloc.dart';
+import 'package:naturly/src/feature/settings/data/datasources/supabase_settings_ds.dart';
+import 'package:naturly/src/feature/settings/data/repository/settings_repository.dart';
+import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:naturly/src/core/common/error_reporter/error_reporter.dart';
@@ -91,14 +95,20 @@ Future<DependenciesContainer> createDependenciesContainer(
   final scheduleSupabaseRemoteDS = createScheduleRemoteDs(supabaseClient);
 
   final accountBloc = createAccountBloc(supabaseClient);
+
   final scheduleBloc = createScheduleBloc(
     foodService,
     scheduleSupabaseRemoteDS,
   );
+
+  final authCubit = createAuthCubit(supabaseClient);
+
   final userBaseBloc = createUserBaseBloc(
     foodService,
     scheduleSupabaseRemoteDS,
   );
+
+  final settingsBloc = createSettingsBloc(supabaseClient);
 
   return DependenciesContainer(
     logger: logger,
@@ -106,8 +116,10 @@ Future<DependenciesContainer> createDependenciesContainer(
     errorReporter: errorReporter,
     packageInfo: packageInfo,
     accountBloc: accountBloc,
+    authCubit: authCubit,
     scheduleBloc: scheduleBloc,
     userbaseBloc: userBaseBloc,
+    settingsBloc: settingsBloc,
     appSettingsBloc: appSettingsBloc,
   );
 }
@@ -137,6 +149,18 @@ Future<ErrorReporter> createErrorReporter(ApplicationConfig config) async {
 
 ScheduleSupabaseRemoteDS createScheduleRemoteDs(SupabaseClient supabaseClient) {
   return ScheduleSupabaseRemoteDS(supabase: supabaseClient);
+}
+
+SettingsBloc createSettingsBloc(SupabaseClient supabaseClient) {
+  return SettingsBloc(
+    settingsRepository: SettingsRepositoryImpl(
+      settingsDS: SupabaseSettingsDS(supabaseClient: supabaseClient),
+    ),
+  );
+}
+
+AuthCubit createAuthCubit(SupabaseClient supabaseClient) {
+  return AuthCubit(supabase: supabaseClient);
 }
 
 UserbaseBloc createUserBaseBloc(

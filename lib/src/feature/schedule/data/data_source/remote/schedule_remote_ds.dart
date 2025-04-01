@@ -18,8 +18,7 @@ class ScheduleSupabaseRemoteDS {
           .filter('id', 'eq', supabase.auth.currentUser?.id.toString());
       return products;
     } catch (e) {
-      print(e);
-      return [];
+      throw e;
     }
   }
 
@@ -31,8 +30,7 @@ class ScheduleSupabaseRemoteDS {
           .filter('id', 'eq', supabase.auth.currentUser?.id.toString());
       return products;
     } catch (e) {
-      print(e);
-      return [];
+      throw e;
     }
   }
 
@@ -49,7 +47,6 @@ class ScheduleSupabaseRemoteDS {
           .select('week_ration')
           .eq('id', userId);
     } catch (e) {
-      print('Error saving ration: $e');
       throw e;
     }
   }
@@ -72,7 +69,7 @@ class ScheduleSupabaseRemoteDS {
           .update({'week_ration': rationData})
           .eq('id', userId);
     } catch (e) {
-      print('Error saving ration: $e');
+      throw e;
     }
   }
 
@@ -83,7 +80,7 @@ class ScheduleSupabaseRemoteDS {
         {'id': supabase.auth.currentUser?.id.toString(), ...mapProduct},
       ]);
     } catch (e) {
-      print(e);
+      throw e;
     }
   }
 
@@ -94,7 +91,7 @@ class ScheduleSupabaseRemoteDS {
         {'id': supabase.auth.currentUser?.id.toString(), ...mapProduct},
       ]);
     } catch (e) {
-      print(e);
+      throw e;
     }
   }
 }

@@ -22,10 +22,14 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
     int dayIndex,
     Human person,
   ) async {
-    final availableProducts = await scheduleRemoteDs.getUserProducts().then(
-      (products) =>
-          products.map((e) => Product.fromJson(jsonEncode(e))).toList(),
-    );
+    final productsJson = await scheduleRemoteDs.getUserProducts();
+
+    final productJsonList = productsJson.map((e) => jsonEncode(e)).toList();
+
+    final availableProducts =
+        productJsonList.map((jsonString) {
+          return Product.fromJson(jsonString);
+        }).toList();
 
     final userDishes = await scheduleRemoteDs.getUserDishes();
 
@@ -121,10 +125,14 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
     final weekRation = userRationJson.first['week_ration'];
 
     final List<DayRation> ration =
-        weekRation.map<DayRation>((e) {
-          DayRation dayRation = DayRation.fromMap(e);
-          return dayRation;
-        }).toList();
+        weekRation != null
+            ? weekRation.map<DayRation>((e) {
+              DayRation dayRation = DayRation.fromMap(
+                e as Map<String, dynamic>,
+              );
+              return dayRation;
+            }).toList()
+            : [];
 
     return ration;
   }

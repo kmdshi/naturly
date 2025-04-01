@@ -1,4 +1,4 @@
-
+import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:naturly/src/feature/account/data/data_source/remote/supabase_account_ds.dart';
 import 'package:naturly/src/feature/account/domain/repository/account_init_repository.dart';
 
@@ -15,5 +15,10 @@ class AccountInitRepositoryImpl extends AccountInitRepository {
   @override
   Future<void> signUp(String email, String password) {
     return supabaseRemoteAccountDS.signUpWithEmailPassword(email, password);
+  }
+
+  @override
+  Future<void> accountFill(Human user) async {
+    await supabaseRemoteAccountDS.fillAccount(user);
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Human {
   final int age;
@@ -89,11 +91,7 @@ class Human {
     double fatsGrams = fatsCalories / 9;
     double carbsGrams = carbsCalories / 4;
 
-    return {
-      'protein': proteinGrams,
-      'fats': fatsGrams,
-      'carbs': carbsGrams,
-    };
+    return {'protein': proteinGrams, 'fats': fatsGrams, 'carbs': carbsGrams};
   }
 
   double calculateWeeklyCalories() {
@@ -116,4 +114,34 @@ class Human {
   bool hasRestriction(String restriction) {
     return restrictions.contains(restriction);
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'age': age,
+      'sex': sex,
+      'height': height,
+      'weight': weight,
+      'goal': goal,
+      'activityLevel': activityLevel,
+      'restrictions': restrictions.toList(),
+      'activityMultiplier': activityMultiplier,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Human.fromMap(Map<String, dynamic> map) {
+    return Human(
+      age: map['age'] as int,
+      sex: map['sex'] as String,
+      height: map['height'] as int,
+      weight: map['weight'] as int,
+      goal: map['goal'] as String,
+      activityLevel: map['activityLevel'] as String,
+      restrictions: Set<String>.from(map['restrictions'] as List),
+    );
+  }
+
+  factory Human.fromJson(String source) =>
+      Human.fromMap(json.decode(source) as Map<String, dynamic>);
 }

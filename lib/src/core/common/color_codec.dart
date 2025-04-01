@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:ui' show Color;
 
-
 class ColorCodec extends Codec<Color, int> {
   const ColorCodec();
 

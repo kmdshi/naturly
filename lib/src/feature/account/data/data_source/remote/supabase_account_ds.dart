@@ -1,3 +1,4 @@
+import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseRemoteAccountDS {
@@ -23,5 +24,16 @@ class SupabaseRemoteAccountDS {
       password: password,
     );
     return response;
+  }
+
+  Future<void> fillAccount(final Human user) async {
+    final userMap = user.toMap();
+    try {
+      await supabaseClient.from('Profiles').insert([
+        {'id': supabaseClient.auth.currentUser?.id.toString(), ...userMap},
+      ]);
+    } catch (e) {
+      throw e;
+    }
   }
 }

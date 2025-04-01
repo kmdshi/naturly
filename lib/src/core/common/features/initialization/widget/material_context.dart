@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naturly/src/core/common/cubit/auth_cubit.dart';
 import 'package:naturly/src/core/common/router/router.dart';
 import 'package:naturly/src/core/constant/localization/localization.dart';
 import 'package:naturly/src/core/common/features/initialization/widget/dependencies_scope.dart';
@@ -9,6 +10,7 @@ import 'package:naturly/src/core/common/features/settings/model/app_theme.dart';
 import 'package:naturly/src/core/common/features/settings/widget/settings_scope.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bloc/userbase_bloc.dart';
+import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dart';
 
 class MaterialContext extends StatelessWidget {
   const MaterialContext({super.key});
@@ -36,6 +38,12 @@ class MaterialContext extends StatelessWidget {
         ),
         BlocProvider<UserbaseBloc>(
           create: (context) => DependenciesScope.of(context).userbaseBloc,
+        ),
+        BlocProvider<SettingsBloc>(
+          create: (context) => DependenciesScope.of(context).settingsBloc,
+        ),
+        BlocProvider<AuthCubit>(
+          create: (context) => DependenciesScope.of(context).authCubit,
         ),
       ],
       child: MaterialApp.router(

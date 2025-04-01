@@ -86,32 +86,39 @@ class DayRation {
   }
 
   factory DayRation.fromMap(Map<String, dynamic> map) {
+    final day =
+        map['day'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(map['day'] as int)
+            : null;
+    final dayIndex = map['dayIndex'] != null ? map['dayIndex'] as int : null;
+    final morningDish =
+        map['morningDish'] != null
+            ? Dish.fromMap(map['morningDish'] as Map<String, dynamic>)
+            : null;
+    final lunchDish =
+        map['lunchDish'] != null
+            ? Dish.fromMap(map['lunchDish'] as Map<String, dynamic>)
+            : null;
+    final snackDish =
+        map['snackDish'] != null
+            ? Dish.fromMap(map['snackDish'] as Map<String, dynamic>)
+            : null;
+    final dinnerDish =
+        map['dinnerDish'] != null
+            ? Dish.fromMap(map['dinnerDish'] as Map<String, dynamic>)
+            : null;
+    final totalCcal = map['totalCcal'] != null ? map['totalCcal'] as int : null;
+
     return DayRation(
-      day:
-          map['day'] != null
-              ? DateTime.fromMillisecondsSinceEpoch(map['day'] as int)
-              : null,
-      dayIndex: map['dayIndex'] != null ? map['dayIndex'] as int : null,
-      morningDish:
-          map['morningDish'] != null
-              ? Dish.fromMap(map['morningDish'] as Map<String, dynamic>)
-              : null,
-      lunchDish:
-          map['lunchDish'] != null
-              ? Dish.fromMap(map['lunchDish'] as Map<String, dynamic>)
-              : null,
-      snackDish:
-          map['snackDish'] != null
-              ? Dish.fromMap(map['snackDish'] as Map<String, dynamic>)
-              : null,
-      dinnerDish:
-          map['dinnerDish'] != null
-              ? Dish.fromMap(map['dinnerDish'] as Map<String, dynamic>)
-              : null,
-      totalCcal: map['totalCcal'] != null ? map['totalCcal'] as int : null,
+      day: day,
+      dayIndex: dayIndex,
+      morningDish: morningDish,
+      lunchDish: lunchDish,
+      snackDish: snackDish,
+      dinnerDish: dinnerDish,
+      totalCcal: totalCcal,
     );
   }
-
   String toJson() => json.encode(toMap());
 
   factory DayRation.fromJson(String source) =>

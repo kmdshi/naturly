@@ -17,6 +17,7 @@ dependencies:
   collection: 1.19.1
   equatable: ^2.0.7
   fake_async: 1.3.2
+  fl_chart: ^0.70.2
   flutter:
     sdk: flutter
   flutter_bloc: 9.1.0
@@ -53,8 +54,8 @@ flutter:
 
   generate: true
 
-  assets:
-    - assets/images/
+  assets: null
+  # - assets/images/
 
 flutter_gen:
   output: lib/src/core/constant/generated

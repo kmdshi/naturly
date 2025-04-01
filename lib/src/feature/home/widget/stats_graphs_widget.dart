@@ -26,11 +26,7 @@ class StatsGraphsWidget extends StatelessWidget {
           );
         }).toList();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return Card(
       child: Column(
         children: [
           SfCartesianChart(

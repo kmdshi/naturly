@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naturly/src/core/common/router/router.gr.dart';
-import 'package:naturly/src/core/widget/root_screen.dart';
+import 'package:naturly/src/core/widget/alert_snackbar.dart';
 import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/registration_screen.dart';
 
@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    context.read<AccountBloc>().add(InitialEvent());
     super.initState();
   }
 
@@ -36,14 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
-        if (state is AccountLoading) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => Center(child: CircularProgressIndicator()),
-          );
-        } else if (state is AccountLoaded || state is AccountFailure) {
-          Navigator.of(context, rootNavigator: true).pop();
+        if (state is AccountAuthorized || state is AccountFailure) {
+          state is AccountFailure
+              ? showCustomSnackBar(context, state.message)
+              : null;
         }
       },
       child: Scaffold(
@@ -56,7 +53,15 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           child: BlocBuilder<AccountBloc, AccountState>(
             builder: (context, state) {
-              if (state is AccountInitial) {
+              if (state is AccountAuthorized) {
+                Future.microtask(() {
+                  context.router.pushAndPopUntil(
+                    HomeTab(),
+                    predicate: (route) => false,
+                  );
+                });
+                return SizedBox.shrink();
+              } else {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -99,16 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 );
-              } else if (state is AccountLoaded) {
-                Future.microtask(() {
-                  context.router.pushAndPopUntil(
-                    HomeTab(),
-                    predicate: (route) => false,
-                  );
-                });
-                return SizedBox.shrink();
-              } else {
-                return SizedBox.shrink();
               }
             },
           ),

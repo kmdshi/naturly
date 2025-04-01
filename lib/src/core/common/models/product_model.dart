@@ -6,12 +6,13 @@ import 'food_enums.dart';
 class Product {
   final String title;
   final int price;
-  final int protein;
-  final int fats;
-  final int carbs;
-  final int ccal;
+  final double protein;
+  final double fats;
+  final double carbs;
+  final double ccal;
   final ProductGroup productGroup;
   final int quantity;
+
   final FishType? fishType;
   final ProteinType? proteinType;
   final MeatType? meatType;
@@ -47,7 +48,7 @@ class Product {
       'fats': fats,
       'carbs': carbs,
       'ccal': ccal,
-      'productGroup': 'temp',
+      'ProductGroup': ProductGroupExtension.toMap(productGroup),
       'quantity': quantity,
       // 'fishType': fishType?.toMap(),
       // 'proteinType': proteinType?.toMap(),
@@ -59,14 +60,13 @@ class Product {
     return Product(
       title: map['title'] as String,
       price: map['price'] as int,
-      protein: map['protein'] as int,
-      fats: map['fats'] as int,
-      carbs: map['carbs'] as int,
-      ccal: map['ccal'] as int,
-      productGroup: ProductGroup.addedFatsNutsSeedsAndOilyFruits,
-      // ProductGroupExtension.fromMap(
-      //   map['productGroup'] as String,
-      // ),
+      protein: map['protein'] as double,
+      fats: map['fats'] as double,
+      carbs: map['carbs'] as double,
+      ccal: map['ccal'] as double,
+      productGroup: ProductGroupExtension.fromMap(
+        map['ProductGroup'] as String,
+      ),
       fishType:
           map['fishType'] != null
               ? FishTypeExtension.fromMap(map['fishType'] as String)
@@ -91,10 +91,10 @@ class Product {
   Product copyWith({
     String? title,
     int? price,
-    int? protein,
-    int? fats,
-    int? carbs,
-    int? ccal,
+    double? protein,
+    double? fats,
+    double? carbs,
+    double? ccal,
     ProductGroup? productGroup,
     FishType? fishType,
     ProteinType? proteinType,

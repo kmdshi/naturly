@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naturly/src/core/common/router/router.gr.dart';
-import 'package:naturly/src/core/widget/root_screen.dart';
 import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/login_screen.dart';
 
@@ -43,7 +42,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               barrierDismissible: false,
               builder: (context) => Center(child: CircularProgressIndicator()),
             );
-          } else if (state is AccountLoaded || state is AccountFailure) {
+          } else if (state is AccountRegistred || state is AccountFailure) {
             Navigator.of(context, rootNavigator: true).pop();
           }
         },
@@ -100,10 +99,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ),
               );
-            } else if (state is AccountLoaded) {
+            } else if (state is AccountRegistred) {
               Future.microtask(() {
                 context.router.pushAndPopUntil(
-                  HomeTab(),
+                  ProfileDataFillRoute(),
                   predicate: (route) => false,
                 );
               });

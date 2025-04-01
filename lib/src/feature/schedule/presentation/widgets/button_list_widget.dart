@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:naturly/src/core/common/models/day_ration_model.dart';
 import 'package:naturly/src/core/common/router/router.gr.dart';
 import 'package:naturly/src/core/common/features/initialization/widget/dependencies_scope.dart';
 

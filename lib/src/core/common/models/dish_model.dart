@@ -39,7 +39,7 @@ class Dish {
       'title': title,
       'mealType': mealType,
       'products': products.map((x) => x.toMap()).toList(),
-      'calories': calories,
+      'ccal': calories,
       'restrictions': restrictions.toList(),
       'totalPrice': totalPrice,
       'missingProducts': missingProducts,
@@ -75,18 +75,21 @@ class Dish {
       title: map['title'] as String,
       mealType: map['mealType'] as String,
       products: List<Product>.from(
-        (map['products'] as List<dynamic>)
-            .map((x) => Product.fromMap(x as Map<String, dynamic>)),
+        (map['products'] as List<dynamic>).map(
+          (x) => Product.fromMap(x as Map<String, dynamic>),
+        ),
       ),
-      calories: map['calories'] as int,
+      calories: map['ccal'] as int,
       restrictions: Set<String>.from(map['restrictions'] as List<dynamic>),
       totalPrice: map['totalPrice'] as int,
-      missingProducts: map['missingProducts'] != null
-          ? List<Product>.from(
-              (map['missingProducts'] as List<dynamic>)
-                  .map((x) => Product.fromMap(x as Map<String, dynamic>)),
-            )
-          : [],
+      missingProducts:
+          map['missingProducts'] != null
+              ? List<Product>.from(
+                (map['missingProducts'] as List<dynamic>).map(
+                  (x) => Product.fromMap(x as Map<String, dynamic>),
+                ),
+              )
+              : [],
       totalMissingCost: map['totalMissingCost'] as int?,
       protein: map['protein'] as int,
       fats: map['fats'] as int,

@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:logger/logger.dart';
+import 'package:naturly/src/core/common/cubit/auth_cubit.dart';
+import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:naturly/src/core/common/error_reporter/error_reporter.dart';
@@ -17,7 +19,9 @@ class DependenciesContainer {
     required this.accountBloc,
     required this.scheduleBloc,
     required this.userbaseBloc,
+    required this.authCubit,
     required this.errorReporter,
+    required this.settingsBloc,
     required this.packageInfo,
   });
 
@@ -32,6 +36,10 @@ class DependenciesContainer {
   final ScheduleBloc scheduleBloc;
 
   final UserbaseBloc userbaseBloc;
+
+  final SettingsBloc settingsBloc;
+
+  final AuthCubit authCubit;
 
   final ErrorReporter errorReporter;
 

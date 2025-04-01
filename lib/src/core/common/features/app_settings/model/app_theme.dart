@@ -9,12 +9,16 @@ final class AppTheme with Diagnosticable {
 
   final Color seed;
 
-  static const defaultTheme =
-      AppTheme(themeMode: ThemeMode.system, seed: Color(0xFF6200EE));
+  static const defaultTheme = AppTheme(
+    themeMode: ThemeMode.system,
+    seed: Color(0xFF6200EE),
+  );
 
   ThemeData buildThemeData(Brightness brightness) {
-    final colorScheme =
-        ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: seed,
+      brightness: brightness,
+    );
     return ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
   }
 
