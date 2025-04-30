@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:naturly/src/core/common/models/day_ration_model.dart';
-
+import 'package:naturly/src/core/common/models/dish_model.dart';
+import 'package:naturly/src/feature/schedule/presentation/widgets/dish_dialog.dart';
 
 class CurrentScheduleWidget extends StatelessWidget {
   final List<DayRation> schedule;
 
-  const CurrentScheduleWidget({
-    super.key,
-    required this.schedule,
-  });
+  const CurrentScheduleWidget({super.key, required this.schedule});
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +15,7 @@ class CurrentScheduleWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Table(
         border: TableBorder.all(color: Colors.black12),
-        columnWidths: const {
-          0: IntrinsicColumnWidth(),
-        },
+        columnWidths: const {0: IntrinsicColumnWidth()},
         children: [
           TableRow(
             children: [
@@ -53,13 +49,17 @@ class CurrentScheduleWidget extends StatelessWidget {
                 ),
               ),
               for (int i = 0; i < 7; i++)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (i < schedule.length)
-                        ? (schedule[i].morningDish?.toString() ?? '-')
-                        : '-',
+                InkWell(
+                  onTap:
+                      () => _showDish(schedule[i].morningDish ?? null, context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (i < schedule.length)
+                          ? (schedule[i].morningDish?.toString() ?? '-')
+                          : '-',
+                    ),
                   ),
                 ),
             ],
@@ -75,13 +75,17 @@ class CurrentScheduleWidget extends StatelessWidget {
                 ),
               ),
               for (int i = 0; i < 7; i++)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (i < schedule.length)
-                        ? (schedule[i].lunchDish?.toString() ?? '-')
-                        : '-',
+                InkWell(
+                  onTap:
+                      () => _showDish(schedule[i].lunchDish ?? null, context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (i < schedule.length)
+                          ? (schedule[i].lunchDish?.toString() ?? '-')
+                          : '-',
+                    ),
                   ),
                 ),
             ],
@@ -97,13 +101,17 @@ class CurrentScheduleWidget extends StatelessWidget {
                 ),
               ),
               for (int i = 0; i < 7; i++)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (i < schedule.length)
-                        ? (schedule[i].snackDish?.toString() ?? '-')
-                        : '-',
+                InkWell(
+                  onTap:
+                      () => _showDish(schedule[i].snackDish ?? null, context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (i < schedule.length)
+                          ? (schedule[i].snackDish?.toString() ?? '-')
+                          : '-',
+                    ),
                   ),
                 ),
             ],
@@ -119,13 +127,18 @@ class CurrentScheduleWidget extends StatelessWidget {
                 ),
               ),
               for (int i = 0; i < 7; i++)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (i < schedule.length)
-                        ? (schedule[i].dinnerDish?.toString() ?? '-')
-                        : '-',
+                InkWell(
+                  onTap:
+                      () => _showDish(schedule[i].dinnerDish ?? null, context),
+
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (i < schedule.length)
+                          ? (schedule[i].dinnerDish?.toString() ?? '-')
+                          : '-',
+                    ),
                   ),
                 ),
             ],
@@ -154,6 +167,26 @@ class CurrentScheduleWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showDish(Dish? dish, BuildContext context) async {
+    if (dish == null) return;
+    return await showDialog(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          child: AlertDialog(
+            content: Navigator(
+              onGenerateRoute: (RouteSettings settings) {
+                return MaterialPageRoute(
+                  builder: (context) => DishDialog(dish: dish),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

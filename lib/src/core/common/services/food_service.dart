@@ -225,8 +225,8 @@ class FoodService {
     int dayIndex,
     Human person,
   ) {
-    final pfc = person.calculateWeeklyMacronutrients();
-    final ccals = person.calculateWeeklyCalories();
+    final pfc = person.calculateDayMacronutrients();
+    final ccals = person.calculateDayCalories();
     var copyAvilableProducts = List<Product>.from(availableProducts);
     DateTime dayDate = DateTime.now();
 
@@ -458,6 +458,95 @@ class FoodService {
     }
 
     return selectedDish;
+  }
+
+  DayRation editDayRation(Dish newDish, DayRation currentDayRation) {
+    final now = DateTime.now();
+
+    Dish? currentMeal;
+    String? mealType;
+
+    if (now.hour < 11) {
+      currentMeal = currentDayRation.morningDish;
+      mealType = 'morning';
+    } else if (now.hour < 16) {
+      currentMeal = currentDayRation.lunchDish;
+      mealType = 'lunch';
+    } else if (now.hour < 18) {
+      currentMeal = currentDayRation.snackDish;
+      mealType = 'snack';
+    } else if (now.hour < 20) {
+      currentMeal = currentDayRation.dinnerDish;
+      mealType = 'dinner';
+    } else {
+      return currentDayRation;
+    }
+
+    if ((currentMeal?.calories ?? 0) >= newDish.calories) {
+      switch (mealType) {
+        case 'morning':
+          return currentDayRation.copyWith(morningDish: newDish);
+        case 'lunch':
+          return currentDayRation.copyWith(lunchDish: newDish);
+        case 'snack':
+          return currentDayRation.copyWith(snackDish: newDish);
+        case 'dinner':
+          return currentDayRation.copyWith(dinnerDish: newDish);
+        default:
+          return currentDayRation;
+      }
+    } else {
+      return _overCalloriesGenerateDayRation(
+        mealType,
+        currentDayRation,
+        newDish,
+      );
+    }
+  }
+
+  DayRation _overCalloriesGenerateDayRation(
+    String mealType,
+    DayRation currentDayRation,
+    Dish newDish,
+  ) {
+    final meals = {
+      'morning': currentDayRation.morningDish,
+      'lunch': currentDayRation.lunchDish,
+      'snack': currentDayRation.snackDish,
+      'dinner': currentDayRation.dinnerDish,
+    };
+
+    final mealOrder = ['morning', 'lunch', 'snack', 'dinner'];
+    final startIndex = mealOrder.indexOf(mealType);
+    final futureMeals = mealOrder.sublist(startIndex + 1);
+
+    int sum = 0;
+    final mealsToNullify = <String>[];
+
+    for (final meal in futureMeals) {
+      sum += meals[meal]?.calories ?? 0;
+      if (newDish.calories > sum) {
+        mealsToNullify.add(meal);
+      } else {
+        break;
+      }
+    }
+
+    return currentDayRation.copyWith(
+      morningDish: mealType == 'morning' ? newDish : meals['morning'],
+      lunchDish:
+          mealType == 'lunch'
+              ? newDish
+              : (mealsToNullify.contains('lunch') ? null : meals['lunch']),
+      snackDish:
+          mealType == 'snack'
+              ? newDish
+              : (mealsToNullify.contains('snack') ? null : meals['snack']),
+      dinnerDish:
+          mealType == 'dinner'
+              ? newDish
+              : (mealsToNullify.contains('dinner') ? null : meals['dinner']),
+    );
   }
 
   Dish _selectDish(
