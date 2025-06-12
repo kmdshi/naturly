@@ -14,6 +14,9 @@ class _SideDrawerState extends State<SideDrawer> {
   Widget build(BuildContext context) {
     final tabsRouter = AutoTabsRouter.of(context);
     return SideMenu(
+      mode: SideMenuMode.compact,
+      hasResizer: false,
+      hasResizerToggle: false,
       builder:
           (data) => SideMenuData(
             items: [

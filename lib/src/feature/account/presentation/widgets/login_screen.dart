@@ -4,7 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naturly/src/core/common/router/router.gr.dart';
 import 'package:naturly/src/core/widget/alert_snackbar.dart';
 import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
+import 'package:naturly/src/feature/account/presentation/widgets/login_screen_desktop.dart';
+import 'package:naturly/src/feature/account/presentation/widgets/login_screen_mobile.dart';
+import 'package:naturly/src/feature/account/presentation/widgets/logo_screen.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/registration_screen.dart';
+import 'package:naturly/src/feature/account/presentation/widgets/text_input_wrapper.dart';
 
 @RoutePage()
 class LoginScreen extends StatefulWidget {
@@ -35,6 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
         if (state is AccountAuthorized || state is AccountFailure) {
@@ -44,69 +50,22 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal:
-                MediaQuery.sizeOf(context).width > 600
-                    ? MediaQuery.sizeOf(context).width * 0.3
-                    : MediaQuery.sizeOf(context).width * 0.1,
-          ),
-          child: BlocBuilder<AccountBloc, AccountState>(
-            builder: (context, state) {
-              if (state is AccountAuthorized) {
-                Future.microtask(() {
-                  context.router.pushAndPopUntil(
-                    HomeTab(),
-                    predicate: (route) => false,
-                  );
-                });
-                return SizedBox.shrink();
-              } else {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Log in'),
-                      TextField(controller: emailController),
-                      SizedBox(height: 15),
-                      TextField(controller: passwordController),
-                      Row(
-                        children: [
-                          Text('Don\'t have an account?'),
-                          TextButton(
-                            onPressed:
-                                () => Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (
-                                      context,
-                                      animation,
-                                      secondaryAnimation,
-                                    ) {
-                                      return RegistrationScreen();
-                                    },
-                                  ),
-                                ),
-                            child: Text('Register'),
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed:
-                            () => context.read<AccountBloc>().add(
-                              AccountSingInEvent(
-                                email: emailController.text,
-                                password: passwordController.text,
-                              ),
-                            ),
-                        child: Text('Log in'),
-                      ),
-                    ],
-                  ),
+        body: BlocBuilder<AccountBloc, AccountState>(
+          builder: (context, state) {
+            if (state is AccountAuthorized) {
+              Future.microtask(() {
+                context.router.pushAndPopUntil(
+                  HomeTab(),
+                  predicate: (route) => false,
                 );
-              }
-            },
-          ),
+              });
+              return SizedBox.shrink();
+            } else {
+              return screenWidth > 960
+                  ? LoginScreenDesktop()
+                  : LoginScreenMobile();
+            }
+          },
         ),
       ),
     );

@@ -11,7 +11,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   AccountBloc({required this.accountInitRepository}) : super(AccountInitial()) {
     on<InitialEvent>(_init);
     on<AccountRegistrationEvent>(_accountReg);
-    on<AccountSingInEvent>(_accountSignIn);
+    on<AccountLogInEvent>(_accountSignIn);
     on<AccountFillEvent>(_accountFill);
   }
 
@@ -50,7 +50,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   }
 
   Future<void> _accountSignIn(
-    AccountSingInEvent event,
+    AccountLogInEvent event,
     Emitter<AccountState> emit,
   ) async {
     try {

@@ -18,11 +18,11 @@ class AccountRegistrationEvent extends AccountEvent {
   List<Object> get props => [email, password];
 }
 
-class AccountSingInEvent extends AccountEvent {
+class AccountLogInEvent extends AccountEvent {
   final String email;
   final String password;
 
-  const AccountSingInEvent({required this.email, required this.password});
+  const AccountLogInEvent({required this.email, required this.password});
   @override
   List<Object> get props => [email, password];
 }

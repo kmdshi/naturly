@@ -12,16 +12,26 @@ class CurrentScheduleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Color(0xFFE6E6E6)),
+      ),
       child: Table(
-        border: TableBorder.all(color: Colors.black12),
+        border: TableBorder(
+          verticalInside: BorderSide.none,
+          horizontalInside: BorderSide(color: Color(0xFFE6E6E6)),
+        ),
         columnWidths: const {0: IntrinsicColumnWidth()},
         children: [
           TableRow(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Text(
                   'День недели',
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -54,17 +64,21 @@ class CurrentScheduleWidget extends StatelessWidget {
                       () => _showDish(schedule[i].morningDish ?? null, context),
                   child: Container(
                     padding: const EdgeInsets.all(8),
+
                     alignment: Alignment.center,
                     child: Text(
                       (i < schedule.length)
                           ? (schedule[i].morningDish?.toString() ?? '-')
                           : '-',
+                      style: TextStyle(color: Color(0xFF636363)),
                     ),
                   ),
                 ),
             ],
           ),
           TableRow(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
@@ -85,12 +99,15 @@ class CurrentScheduleWidget extends StatelessWidget {
                       (i < schedule.length)
                           ? (schedule[i].lunchDish?.toString() ?? '-')
                           : '-',
+                      style: TextStyle(color: Color(0xFF636363)),
                     ),
                   ),
                 ),
             ],
           ),
           TableRow(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
@@ -111,12 +128,15 @@ class CurrentScheduleWidget extends StatelessWidget {
                       (i < schedule.length)
                           ? (schedule[i].snackDish?.toString() ?? '-')
                           : '-',
+                      style: TextStyle(color: Color(0xFF636363)),
                     ),
                   ),
                 ),
             ],
           ),
           TableRow(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
@@ -138,12 +158,15 @@ class CurrentScheduleWidget extends StatelessWidget {
                       (i < schedule.length)
                           ? (schedule[i].dinnerDish?.toString() ?? '-')
                           : '-',
+                      style: TextStyle(color: Color(0xFF636363)),
                     ),
                   ),
                 ),
             ],
           ),
           TableRow(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
@@ -161,6 +184,7 @@ class CurrentScheduleWidget extends StatelessWidget {
                     (i < schedule.length)
                         ? (schedule[i].totalCcal?.toString() ?? '-')
                         : '-',
+                    style: TextStyle(color: Color(0xFF636363)),
                   ),
                 ),
             ],
