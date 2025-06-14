@@ -44,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         body: BlocBuilder<AccountBloc, AccountState>(
           builder: (context, state) {
