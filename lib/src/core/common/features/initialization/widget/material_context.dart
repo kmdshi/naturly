@@ -15,15 +15,12 @@ import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dar
 class MaterialContext extends StatelessWidget {
   const MaterialContext({super.key});
 
-  static final _globalKey = GlobalKey(debugLabel: 'MaterialContext');
-
   @override
   Widget build(BuildContext context) {
     final settings = SettingsScope.settingsOf(context);
-    final mediaQueryData = MediaQuery.of(context);
 
     final theme = settings.appTheme ?? AppTheme.defaultTheme;
-    
+
     final lightTheme = theme.buildThemeData(Brightness.light);
     final darkTheme = theme.buildThemeData(Brightness.dark);
     final router = AppRouter();
@@ -56,20 +53,7 @@ class MaterialContext extends StatelessWidget {
         supportedLocales: Localization.supportedLocales,
         routerConfig: router.config(),
         builder:
-            (context, router) => Scaffold(
-              drawer: SideDrawer(),
-              body: MediaQuery(
-                key: _globalKey,
-                data: mediaQueryData.copyWith(
-                  textScaler: TextScaler.linear(
-                    mediaQueryData.textScaler
-                        .scale(settings.textScale ?? 1)
-                        .clamp(0.5, 2),
-                  ),
-                ),
-                child: router!,
-              ),
-            ),
+            (context, router) => Scaffold(drawer: SideDrawer(), body: router!),
       ),
     );
   }

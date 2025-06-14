@@ -135,15 +135,7 @@ class _RegistrationScreenMobileState extends State<RegistrationScreenMobile> {
                     onPressed:
                         () => Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            pageBuilder: (
-                              context,
-                              animation,
-                              secondaryAnimation,
-                            ) {
-                              return LoginScreen();
-                            },
-                          ),
+                          MaterialPageRoute(builder: (_) => LoginScreen()),
                         ),
                     style: ButtonStyle(
                       foregroundColor: WidgetStatePropertyAll(

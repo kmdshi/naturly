@@ -31,123 +31,118 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children: [
-          Image.asset(
-            'assets/icons/logo.png',
-            width: 250,
-            height: 250,
-          ), // TODO: перенести в константы
-          SizedBox(height: 15),
-          const Text(
-            'Log in to your account',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 36,
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/icons/logo.png',
+              width: 250,
+              height: 250,
+            ), // TODO: перенести в константы
+            SizedBox(height: 15),
+            const Text(
+              'Log in to your account',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 36,
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          SizedBox(height: 7),
+            SizedBox(height: 7),
 
-          Text(
-            'Welcome back! Please enter your details.',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 16,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.normal,
+            Text(
+              'Welcome back! Please enter your details.',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.normal,
+              ),
             ),
-          ),
-          SizedBox(height: 30),
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 400,
-              minHeight: 42,
-              maxHeight: 42,
-            ),
-            child: TextInputWrapper(
+            SizedBox(height: 30),
+            TextInputWrapper(
               controller: emailController,
               hintText: 'Enter your email',
             ),
-          ),
-          SizedBox(height: 15),
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 400,
-              minHeight: 42,
-              maxHeight: 42,
-            ),
-            child: TextInputWrapper(
-              controller: passwordController,
-              hintText: 'Enter your password',
-            ),
-          ),
-          SizedBox(height: 15),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 400,
-              minWidth: 400,
-              minHeight: 40,
-              maxHeight: 40,
-            ),
-            child: ElevatedButton(
-              onPressed:
-                  () => context.read<AccountBloc>().add(
-                    AccountLogInEvent(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    ),
-                  ),
-              child: const Text(
-                'Login',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            SizedBox(height: 15),
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 400,
+                minHeight: 42,
+                maxHeight: 42,
               ),
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                backgroundColor: WidgetStatePropertyAll(Color(0xFF0062CC)),
-                foregroundColor: WidgetStatePropertyAll(Colors.white),
+              child: TextInputWrapper(
+                controller: passwordController,
+                hintText: 'Enter your password',
               ),
             ),
-          ),
-          SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Don\'t have an account?',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w100,
-                ),
+            SizedBox(height: 15),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 400,
+                minWidth: 400,
+                minHeight: 40,
+                maxHeight: 40,
               ),
-              TextButton(
+              child: ElevatedButton(
                 onPressed:
-                    () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => RegistrationScreen()),
+                    () => context.read<AccountBloc>().add(
+                      AccountLogInEvent(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      ),
                     ),
-                style: ButtonStyle(
-                  foregroundColor: WidgetStatePropertyAll(Color(0xFF0062CC)),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                 ),
-                child: Text(
-                  'Sign up',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
+                style: ButtonStyle(
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
+                  backgroundColor: WidgetStatePropertyAll(Color(0xFF0062CC)),
+                  foregroundColor: WidgetStatePropertyAll(Colors.white),
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Don\'t have an account?',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w100,
+                  ),
+                ),
+                TextButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => RegistrationScreen()),
+                      ),
+                  style: ButtonStyle(
+                    foregroundColor: WidgetStatePropertyAll(Color(0xFF0062CC)),
+                  ),
+                  child: Text(
+                    'Sign up',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

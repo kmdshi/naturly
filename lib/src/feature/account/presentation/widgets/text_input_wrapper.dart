@@ -22,20 +22,20 @@ class TextInputWrapper extends StatelessWidget {
           vertical: 10,
           horizontal: 12,
         ),
-        // focusedBorder: OutlineInputBorder(
-        //   borderRadius: BorderRadius.all(Radius.circular(8)),
-        //   borderSide: BorderSide(
-        //     width: 0.5,
-        //     color: Colors.black.withValues(alpha: 0.45),
-        //   ),
-        // ),
-        // enabledBorder: OutlineInputBorder(
-        //   borderRadius: BorderRadius.all(Radius.circular(8)),
-        //   borderSide: BorderSide(
-        //     width: 0.5,
-        //     color: Colors.black.withValues(alpha: 0.1),
-        //   ),
-        // ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(
+            width: 0.5,
+            color: Colors.black.withValues(alpha: 0.45),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(
+            width: 0.5,
+            color: Colors.black.withValues(alpha: 0.1),
+          ),
+        ),
       ),
     );
   }

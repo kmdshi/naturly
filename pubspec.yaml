@@ -11,30 +11,29 @@ workspace:
   - packages/logger
 
 dependencies:
-  async: 2.12.0
+  async: 2.13.0
   auto_route: ^10.0.1
   clock: 1.1.2
   collection: 1.19.1
   equatable: ^2.0.7
-  fl_chart: ^0.70.2
+  fl_chart: ^1.0.0
   flutter:
     sdk: flutter
-  flutter_bloc: 9.1.0
+  flutter_bloc: 9.1.1
   flutter_localizations:
     sdk: flutter
   flutter_side_menu: ^0.5.41
   glassmorphism: ^3.0.0
-  intl: 0.19.0
+  intl: 0.20.2
   logger:
     path: packages/logger
-  meta: 1.16.0
   nanoid: ^1.0.0
   package_info_plus: 8.3.0
   path: 1.9.1
   path_provider: 2.1.5
   rxdart: 0.28.0
-  sentry_flutter: 8.13.2
-  shared_preferences: 2.5.2
+  sentry_flutter: 8.14.2
+  shared_preferences: 2.5.3
   stack_trace: 1.12.1
   stream_transform: 2.1.1
   supabase_flutter: ^2.8.4
@@ -43,11 +42,7 @@ dev_dependencies:
   auto_route_generator: ^10.0.1
   build_runner: 2.4.15
   flutter_gen_runner: 5.10.0
-  flutter_launcher_icons: 0.14.3
-  flutter_native_splash: 2.4.5
-  flutter_test:
-    sdk: flutter
-  mockito: 5.4.5
+  
 
 flutter:
   uses-material-design: true

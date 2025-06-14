@@ -19,6 +19,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocListener<AccountBloc, AccountState>(
         listener: (context, state) {
           if (state is AccountLoading) {
