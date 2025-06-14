@@ -3,37 +3,42 @@ import 'package:flutter/material.dart';
 
 @immutable
 final class AppTheme with Diagnosticable {
-  const AppTheme({required this.themeMode, required this.seed});
+  const AppTheme({required this.themeMode});
 
   final ThemeMode themeMode;
 
-  final Color seed;
+  // final Color seed;
 
-  static const defaultTheme = AppTheme(
-    themeMode: ThemeMode.system,
-    seed: Color(0xFF6200EE),
-  );
+  // static const defaultTheme = AppTheme(
+  // themeMode: ThemeMode.system,
+  // seed: Color(0xFF6200EE),
+  // );
 
   ThemeData buildThemeData(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: seed,
-      brightness: brightness,
+    // final colorScheme = ColorScheme.fromSeed(
+    //   seedColor: seed,
+    //   brightness: brightness,
+    // );
+    return ThemeData(
+      scaffoldBackgroundColor:
+          brightness == Brightness.light ? Color(0xFFF8FAFB) : Colors.grey,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        elevation: 0,
+
+        backgroundColor: Colors.transparent,
+      ),
     );
-    return ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(ColorProperty('seed', seed));
+    // properties.add(ColorProperty('seed', seed));
     properties.add(EnumProperty<ThemeMode>('type', themeMode));
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AppTheme && seed == other.seed && themeMode == other.themeMode;
-
-  @override
-  int get hashCode => Object.hash(seed, themeMode);
+      other is AppTheme && themeMode == other.themeMode;
 }

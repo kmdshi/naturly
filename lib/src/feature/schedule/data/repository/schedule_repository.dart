@@ -115,21 +115,17 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
 
   @override
   Future<void> addUserRation(List<DayRation> ration) async {
-    await scheduleRemoteDs.addUserRation(ration);
+    await scheduleRemoteDs.addOrUpdateUserRation(ration);
   }
 
   @override
   Future<List<DayRation>> getUserRation() async {
     final userRationJson = await scheduleRemoteDs.getUserRation();
 
-    final weekRation = userRationJson.first['week_ration'];
-
     final List<DayRation> ration =
-        weekRation != null
-            ? weekRation.map<DayRation>((e) {
-              DayRation dayRation = DayRation.fromMap(
-                e as Map<String, dynamic>,
-              );
+        userRationJson.isNotEmpty
+            ? userRationJson.map<DayRation>((e) {
+              DayRation dayRation = DayRation.fromMap(e);
               return dayRation;
             }).toList()
             : [];

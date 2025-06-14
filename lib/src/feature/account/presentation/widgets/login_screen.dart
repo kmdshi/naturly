@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naturly/src/core/common/layout/layout.dart';
 import 'package:naturly/src/core/common/router/router.gr.dart';
 import 'package:naturly/src/core/widget/alert_snackbar.dart';
 import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
@@ -39,14 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
-        if (state is AccountAuthorized || state is AccountFailure) {
-          state is AccountFailure
-              ? showCustomSnackBar(context, state.message)
-              : null;
+        if (state is AccountFailure) {
+          showCustomSnackBar(context, state.message);
         }
       },
       child: Scaffold(
@@ -61,9 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
               });
               return SizedBox.shrink();
             } else {
-              return screenWidth > 960
-                  ? LoginScreenDesktop()
-                  : LoginScreenMobile();
+              return WindowSizeScope.of(context).isCompact ||
+                      WindowSizeScope.of(context).isMedium
+                  ? LoginScreenMobile()
+                  : LoginScreenDesktop();
             }
           },
         ),

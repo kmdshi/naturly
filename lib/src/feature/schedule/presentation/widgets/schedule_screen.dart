@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naturly/src/core/common/features/initialization/widget/dependencies_scope.dart';
+import 'package:naturly/src/core/common/router/router.gr.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/button_list_widget.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/current_schedule_widget.dart';
@@ -14,15 +16,11 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-
   @override
   void initState() {
     context.read<ScheduleBloc>().add(ScheduleGetUserRationEvent());
     super.initState();
   }
-
-  
- 
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +42,31 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 if (state is ScheduleLoaded) {
                   return Column(
                     children: [
-                      CurrentScheduleWidget(
-                        schedule: state.ration, 
-                      ),
+                      CurrentScheduleWidget(schedule: state.ration),
                       SizedBox(height: 15),
-                      ButtonListWidget(),
+                      ButtonListWidget(
+                        buttons: [
+                          ElevatedButton(
+                            onPressed: () {
+                              context.router.push(GenerateScheduleRoute());
+                              DependenciesScope.of(
+                                context,
+                              ).logger.debug('pushed');
+                            },
+                            child: Text('Генерация рациона'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.router.push(UserBaseRoute());
+                            },
+                            child: Text('База продуктов/блюд'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: Text('История'),
+                          ),
+                        ],
+                      ),
                     ],
                   );
                 }

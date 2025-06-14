@@ -51,11 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       ThemeMode.light
                                   ? ThemeMode.dark
                                   : ThemeMode.light,
-                          seed:
-                              currentSettings.appTheme?.themeMode ==
-                                      ThemeMode.light
-                                  ? Colors.grey[900]!
-                                  : Colors.blueGrey[50]!,
                         ),
                       ),
                     ),

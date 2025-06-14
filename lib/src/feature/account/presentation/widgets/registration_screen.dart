@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naturly/src/core/common/layout/layout.dart';
 import 'package:naturly/src/core/common/router/router.gr.dart';
 import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
-import 'package:naturly/src/feature/account/presentation/widgets/login_screen_desktop.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/registration_screen_desktop.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/registration_screen_mobile.dart';
 
@@ -18,8 +18,6 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: BlocListener<AccountBloc, AccountState>(
         listener: (context, state) {
@@ -36,9 +34,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: BlocBuilder<AccountBloc, AccountState>(
           builder: (context, state) {
             if (state is AccountInitial) {
-              return screenWidth > 960
-                  ? RegistrationScreenDesktop()
-                  : RegistrationScreenMobile();
+              return WindowSizeScope.of(context).isCompact ||
+                      WindowSizeScope.of(context).isMedium
+                  ? RegistrationScreenMobile()
+                  : RegistrationScreenDesktop();
             } else if (state is AccountRegistred) {
               Future.microtask(() {
                 context.router.pushAndPopUntil(

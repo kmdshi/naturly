@@ -7,7 +7,6 @@ import 'package:naturly/src/core/common/features/settings/data/theme_mode_codec.
 import 'package:naturly/src/core/common/features/settings/model/app_settings.dart';
 import 'package:naturly/src/core/common/features/settings/model/app_theme.dart';
 
-
 abstract interface class AppSettingsDatasource {
   Future<void> setAppSettings(AppSettings appSettings);
 
@@ -28,11 +27,15 @@ final class AppSettingsDatasourceImpl implements AppSettingsDatasource {
   Future<AppSettings?> getAppSettings() => _appSettings.read();
 
   @override
-  Future<void> setAppSettings(AppSettings appSettings) => _appSettings.set(appSettings);
+  Future<void> setAppSettings(AppSettings appSettings) =>
+      _appSettings.set(appSettings);
 }
 
 class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
-  AppSettingsPersistedEntry({required super.sharedPreferences, required super.key});
+  AppSettingsPersistedEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   late final _themeMode = StringPreferencesEntry(
     sharedPreferences: sharedPreferences,
@@ -85,10 +88,7 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
     AppTheme? appTheme;
 
     if (themeMode != null && themeSeedColor != null) {
-      appTheme = AppTheme(
-        themeMode: const ThemeModeCodec().decode(themeMode),
-        seed: _colorCodec.decode(themeSeedColor),
-      );
+      appTheme = AppTheme(themeMode: const ThemeModeCodec().decode(themeMode));
     }
 
     Locale? appLocale;
@@ -97,7 +97,11 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
       appLocale = Locale(languageCode, countryCode);
     }
 
-    return AppSettings(appTheme: appTheme, locale: appLocale, textScale: textScale);
+    return AppSettings(
+      appTheme: appTheme,
+      locale: appLocale,
+      textScale: textScale,
+    );
   }
 
   @override
@@ -115,9 +119,10 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
   Future<void> set(AppSettings value) async {
     if (value.appTheme != null) {
       await (
-        _themeMode.set(const ThemeModeCodec().encode(value.appTheme!.themeMode)),
-        _themeSeedColor.set(_colorCodec.encode(value.appTheme!.seed)),
-      ).wait;
+        _themeMode.set(
+          const ThemeModeCodec().encode(value.appTheme!.themeMode),
+        ),
+      );
     }
 
     if (value.locale != null) {

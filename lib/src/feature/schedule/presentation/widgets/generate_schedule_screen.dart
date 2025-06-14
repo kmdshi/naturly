@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
+import 'package:naturly/src/feature/schedule/presentation/widgets/button_list_widget.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/current_schedule_widget.dart';
 
 @RoutePage()
@@ -29,60 +30,57 @@ class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Генерация рациона'),
-        actions: [
-          IconButton(onPressed: _showOptionsDialog, icon: Icon(Icons.settings)),
-        ],
-      ),
-      body: BlocBuilder<ScheduleBloc, ScheduleState>(
-        builder: (context, state) {
-          if (state is ScheduleLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
+      appBar: AppBar(),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: BlocBuilder<ScheduleBloc, ScheduleState>(
+          builder: (context, state) {
+            if (state is ScheduleLoading) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-          if (state is ScheduleFailure) {
-            return Center(child: Text('Ошибка: ${state.message}'));
-          }
+            if (state is ScheduleFailure) {
+              return Center(child: Text('Ошибка: ${state.message}'));
+            }
 
-          if (state is ScheduleLoaded) {
-            return Column(
-              children: [
-                CurrentScheduleWidget(schedule: state.ration),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed:
-                          () => context.read<ScheduleBloc>().add(
-                            ScheduleAddUserRation(ration: state.ration),
-                          ),
-                      child: Text('Сохранить'),
-                    ),
-                    ElevatedButton(
-                      onPressed:
-                          () => context.read<ScheduleBloc>().add(
-                            ScheduleGenerateDayRation(person: me),
-                          ),
-                      child: Text('Сгенерировать на день'),
-                    ),
-                    ElevatedButton(
-                      onPressed:
-                          () => context.read<ScheduleBloc>().add(
-                            ScheduleGenerateWeekRation(person: me),
-                          ),
+            if (state is ScheduleLoaded) {
+              return Column(
+                children: [
+                  CurrentScheduleWidget(schedule: state.ration),
+                  SizedBox(height: 15),
+                  ButtonListWidget(
+                    buttons: [
+                      ElevatedButton(
+                        onPressed:
+                            () => context.read<ScheduleBloc>().add(
+                              ScheduleAddUserRation(ration: state.ration),
+                            ),
+                        child: Text('Сохранить'),
+                      ),
+                      ElevatedButton(
+                        onPressed:
+                            () => context.read<ScheduleBloc>().add(
+                              ScheduleGenerateDayRation(person: me),
+                            ),
+                        child: Text('Сгенерировать на день'),
+                      ),
+                      ElevatedButton(
+                        onPressed:
+                            () => context.read<ScheduleBloc>().add(
+                              ScheduleGenerateWeekRation(person: me),
+                            ),
 
-                      child: Text('Сгенерировать на неделю'),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }
+                        child: Text('Сгенерировать на неделю'),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }
 
-          return Center(child: Text('Непредвиденное состояние'));
-        },
+            return Center(child: Text('Непредвиденное состояние'));
+          },
+        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ class AppSettings with Diagnosticable {
 
   final double? textScale;
 
+
   AppSettings copyWith({AppTheme? appTheme, Locale? locale, double? textScale}) => AppSettings(
     appTheme: appTheme ?? this.appTheme,
     locale: locale ?? this.locale,

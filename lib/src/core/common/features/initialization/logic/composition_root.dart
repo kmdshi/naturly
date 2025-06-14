@@ -86,6 +86,7 @@ Future<DependenciesContainer> createDependenciesContainer(
   final sharedPreferences = SharedPreferencesAsync();
 
   final supabaseClient = Supabase.instance.client;
+  
   final foodService = FoodService();
 
   final packageInfo = await PackageInfo.fromPlatform();

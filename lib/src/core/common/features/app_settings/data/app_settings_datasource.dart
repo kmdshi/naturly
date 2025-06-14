@@ -1,13 +1,10 @@
 import 'dart:ui';
 
-import 'package:naturly/src/core/common/color_codec.dart';
 import 'package:naturly/src/core/common/persisted_entry.dart';
 import 'package:naturly/src/core/common/features/app_settings/model/app_settings.dart';
 import 'package:naturly/src/core/common/features/app_settings/model/app_theme.dart';
 import 'package:naturly/src/core/common/features/settings/data/theme_mode_codec.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 abstract interface class AppSettingsDatasource {
   Future<void> setAppSettings(AppSettings appSettings);
@@ -34,8 +31,10 @@ final class AppSettingsDatasourceImpl implements AppSettingsDatasource {
 }
 
 class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
-  AppSettingsPersistedEntry(
-      {required super.sharedPreferences, required super.key});
+  AppSettingsPersistedEntry({
+    required super.sharedPreferences,
+    required super.key,
+  });
 
   late final _themeMode = StringPreferencesEntry(
     sharedPreferences: sharedPreferences,
@@ -62,7 +61,7 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
     key: '$key.textScale',
   );
 
-  static const _colorCodec = ColorCodec();
+  // static const _colorCodec = ColorCodec();
 
   @override
   Future<AppSettings?> read() async {
@@ -88,10 +87,7 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
     AppTheme? appTheme;
 
     if (themeMode != null && themeSeedColor != null) {
-      appTheme = AppTheme(
-        themeMode: const ThemeModeCodec().decode(themeMode),
-        seed: _colorCodec.decode(themeSeedColor),
-      );
+      appTheme = AppTheme(themeMode: const ThemeModeCodec().decode(themeMode));
     }
 
     Locale? appLocale;
@@ -101,7 +97,10 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
     }
 
     return AppSettings(
-        appTheme: appTheme, locale: appLocale, textScale: textScale);
+      appTheme: appTheme,
+      locale: appLocale,
+      textScale: textScale,
+    );
   }
 
   @override
@@ -118,11 +117,9 @@ class AppSettingsPersistedEntry extends SharedPreferencesEntry<AppSettings> {
   @override
   Future<void> set(AppSettings value) async {
     if (value.appTheme != null) {
-      await (
-        _themeMode
-            .set(const ThemeModeCodec().encode(value.appTheme!.themeMode)),
-        _themeSeedColor.set(_colorCodec.encode(value.appTheme!.seed)),
-      ).wait;
+      await _themeMode.set(
+        const ThemeModeCodec().encode(value.appTheme!.themeMode),
+      );
     }
 
     if (value.locale != null) {

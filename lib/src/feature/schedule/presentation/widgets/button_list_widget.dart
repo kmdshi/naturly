@@ -1,10 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:naturly/src/core/common/router/router.gr.dart';
-import 'package:naturly/src/core/common/features/initialization/widget/dependencies_scope.dart';
+import 'package:naturly/src/core/common/layout/layout.dart';
 
 class ButtonListWidget extends StatefulWidget {
-  const ButtonListWidget({super.key});
+  final List<Widget> buttons;
+  const ButtonListWidget({super.key, required this.buttons});
 
   @override
   State<ButtonListWidget> createState() => _ButtonListWidgetState();
@@ -13,26 +12,23 @@ class ButtonListWidget extends StatefulWidget {
 class _ButtonListWidgetState extends State<ButtonListWidget> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            context.router.push(
-              GenerateScheduleRoute(),
-            );
-            DependenciesScope.of(context).logger.debug('pushed');
-          },
-          child: Text('Генерация рациона'),
-        ),
-        ElevatedButton(onPressed: () {}, child: Text('Резюме на качество')),
-        ElevatedButton(
-          onPressed: () {
-            context.router.push(UserBaseRoute());
-          },
-          child: Text('База продуктов/блюд'),
-        ),
-        ElevatedButton(onPressed: () {}, child: Text('История')),
-      ],
-    );
+    final isCompact =
+        WindowSizeScope.of(context).isCompact ||
+        WindowSizeScope.of(context).isMedium;
+
+    return isCompact
+        ? Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children:
+              widget.buttons
+                  .map(
+                    (b) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: b,
+                    ),
+                  )
+                  .toList(),
+        )
+        : Wrap(spacing: 6, runSpacing: 6, children: widget.buttons);
   }
 }
