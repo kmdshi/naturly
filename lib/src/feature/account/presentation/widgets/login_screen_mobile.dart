@@ -134,14 +134,8 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                     onPressed:
                         () => Navigator.push(
                           context,
-                          PageRouteBuilder(
-                            pageBuilder: (
-                              context,
-                              animation,
-                              secondaryAnimation,
-                            ) {
-                              return RegistrationScreen();
-                            },
+                          MaterialPageRoute(
+                            builder: (_) => RegistrationScreen(),
                           ),
                         ),
                     style: ButtonStyle(

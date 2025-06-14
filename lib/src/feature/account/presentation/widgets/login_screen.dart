@@ -7,9 +7,6 @@ import 'package:naturly/src/core/widget/alert_snackbar.dart';
 import 'package:naturly/src/feature/account/presentation/bloc/account_bloc.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/login_screen_desktop.dart';
 import 'package:naturly/src/feature/account/presentation/widgets/login_screen_mobile.dart';
-import 'package:naturly/src/feature/account/presentation/widgets/logo_screen.dart';
-import 'package:naturly/src/feature/account/presentation/widgets/registration_screen.dart';
-import 'package:naturly/src/feature/account/presentation/widgets/text_input_wrapper.dart';
 
 @RoutePage()
 class LoginScreen extends StatefulWidget {
@@ -47,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         body: BlocBuilder<AccountBloc, AccountState>(
           builder: (context, state) {
             if (state is AccountAuthorized) {
