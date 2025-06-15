@@ -18,7 +18,7 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
-    context.read<ScheduleBloc>().add(ScheduleGetUserRationEvent());
+    context.read<ScheduleBloc>().add(ScheduleGetWeekUserRationEvent());
     super.initState();
   }
 
@@ -42,7 +42,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 if (state is ScheduleLoaded) {
                   return Column(
                     children: [
-                      CurrentScheduleWidget(schedule: state.ration),
+                      CurrentScheduleWidget(ration: state.ration),
                       SizedBox(height: 15),
                       ButtonListWidget(
                         buttons: [

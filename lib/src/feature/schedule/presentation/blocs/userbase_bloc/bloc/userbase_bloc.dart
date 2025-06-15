@@ -12,13 +12,28 @@ part 'userbase_state.dart';
 class UserbaseBloc extends Bloc<UserbaseEvent, UserbaseState> {
   final UserBaseRepository userBaseRepository;
   UserbaseBloc({required this.userBaseRepository}) : super(UserbaseInitial()) {
-    on<UserbaseGetUserDataEvent>(_getUserData);
+    on<UserbaseGetAllUserDataEvent>(_getAllUserData);
     on<UserbaseAddUserProduct>(_addUserProduct);
     on<UserbaseAddUserDish>(_addUserDish);
+    on<UserbaseGetDishesEvent>(_getUserDishes);
   }
 
-  Future<void> _getUserData(
-    UserbaseGetUserDataEvent event,
+  Future<void> _getUserDishes(
+    UserbaseGetDishesEvent event,
+    Emitter<UserbaseState> emit,
+  ) async {
+    try {
+      emit(UserbaseLoading());
+      final dishes = await userBaseRepository.getUserDishes();
+
+      emit(UserbaseLoaded(products: [], dishes: dishes));
+    } catch (e) {
+      emit(UserbaseFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _getAllUserData(
+    UserbaseGetAllUserDataEvent event,
     Emitter<UserbaseState> emit,
   ) async {
     try {
@@ -39,7 +54,7 @@ class UserbaseBloc extends Bloc<UserbaseEvent, UserbaseState> {
     try {
       List<Product> products = _getCurrentProducts(state);
       List<Dish> dishes = _getCurrentDishes(state);
-      
+
       emit(UserbaseLoading());
 
       await userBaseRepository.addUserProduct(event.product);

@@ -24,11 +24,11 @@ class ScheduleGenerateWeekRation extends ScheduleEvent {
   List<Object> get props => [person];
 }
 
-class ScheduleGetUserRationEvent extends ScheduleEvent {}
+class ScheduleGetWeekUserRationEvent extends ScheduleEvent {}
 
-class ScheduleAddUserRation extends ScheduleEvent {
+class ScheduleSaveUserRation extends ScheduleEvent {
   final List<DayRation> ration;
-  const ScheduleAddUserRation({required this.ration});
+  const ScheduleSaveUserRation({required this.ration});
   @override
   List<Object> get props => [ration];
 }

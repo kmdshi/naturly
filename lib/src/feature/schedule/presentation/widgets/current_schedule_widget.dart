@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:naturly/src/core/common/layout/layout.dart';
-import 'package:naturly/src/core/common/models/day_ration_model.dart';
 import 'package:naturly/src/core/common/models/dish_model.dart';
+import 'package:naturly/src/feature/schedule/domain/models/week_ration.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/dish_dialog.dart';
 
 class CurrentScheduleWidget extends StatefulWidget {
-  final List<DayRation> schedule;
+  final WeekRation ration;
 
-  const CurrentScheduleWidget({super.key, required this.schedule});
+  const CurrentScheduleWidget({super.key, required this.ration});
 
   @override
   State<CurrentScheduleWidget> createState() => _CurrentScheduleWidgetState();
@@ -37,10 +38,10 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
           height: 300,
           child: PageView.builder(
             controller: _pageViewController,
-            itemCount: widget.schedule.length,
+            itemCount: widget.ration.foodData.length,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              final day = widget.schedule[index];
+              final day = widget.ration.foodData[index];
 
               return Column(
                 children: [
@@ -55,15 +56,21 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                       1: FlexColumnWidth(3),
                     },
                     children: [
-                      _buildMobileRow('Завтрак', day.morningDish, context),
-                      _buildMobileRow('Обед', day.lunchDish, context),
-                      _buildMobileRow('Перекус', day.snackDish, context),
-                      _buildMobileRow('Ужин', day.dinnerDish, context),
                       _buildMobileRow(
+                        index,
+                        'Завтрак',
+                        day.morningDish,
+                        context,
+                      ),
+                      _buildMobileRow(index, 'Обед', day.lunchDish, context),
+                      _buildMobileRow(index, 'Перекус', day.snackDish, context),
+                      _buildMobileRow(index, 'Ужин', day.dinnerDish, context),
+                      _buildMobileRow(
+                        index,
                         'Калории',
                         null,
-                        otherInfo: day.totalCcal.toString(),
                         context,
+                        otherInfo: day.totalCcal.toString(),
                       ),
                     ],
                   ),
@@ -73,6 +80,16 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                       IconButton(
                         icon: Icon(Icons.arrow_back),
                         onPressed: () => _updateCurrentPageIndex(index - 1),
+                      ),
+                      ElevatedButton(
+                        onPressed:
+                            () async => Clipboard.setData(
+                              ClipboardData(
+                                text:
+                                    "http://localhost:63338/#/schedule/share?id=${widget.ration.shareId}",
+                              ),
+                            ),
+                        child: Text('Поделиться рационом'),
                       ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
@@ -102,33 +119,33 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                 null,
                 context,
                 staticValues:
-                    widget.schedule
+                    widget.ration.foodData
                         .map((e) => getDayName(e.day!, true))
                         .toList(),
               ),
               _buildDesktopRow(
                 'Завтрак',
-                widget.schedule.map((e) => e.morningDish).toList(),
+                widget.ration.foodData.map((e) => e.morningDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Завтрак',
-                widget.schedule.map((e) => e.morningDish).toList(),
+                widget.ration.foodData.map((e) => e.morningDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Обед',
-                widget.schedule.map((e) => e.lunchDish).toList(),
+                widget.ration.foodData.map((e) => e.lunchDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Перекус',
-                widget.schedule.map((e) => e.snackDish).toList(),
+                widget.ration.foodData.map((e) => e.snackDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Ужин',
-                widget.schedule.map((e) => e.dinnerDish).toList(),
+                widget.ration.foodData.map((e) => e.dinnerDish).toList(),
                 context,
               ),
               _buildDesktopRow(
@@ -136,7 +153,7 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                 null,
                 context,
                 staticValues:
-                    widget.schedule
+                    widget.ration.foodData
                         .map((e) => e.totalCcal?.toString())
                         .toList(),
               ),
@@ -146,7 +163,7 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
   }
 
   void _updateCurrentPageIndex(int newIndex) {
-    if (newIndex >= 0 && newIndex < widget.schedule.length) {
+    if (newIndex >= 0 && newIndex < widget.ration.foodData.length) {
       _pageViewController.animateToPage(
         newIndex,
         duration: Duration(milliseconds: 300),
@@ -184,6 +201,8 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
               : InkWell(
                 onTap:
                     () => _showDish(
+                      dishes[i]?.mealType ?? '',
+                      i,
                       i < dishes.length ? dishes[i] : null,
                       context,
                     ),
@@ -201,10 +220,11 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
   }
 
   TableRow _buildMobileRow(
-    String title,
-    Dish? dish,
-    BuildContext context, {
-    String? otherInfo,
+    final int dayIndex,
+    final String title,
+    final Dish? dish,
+    final BuildContext context, {
+    final String? otherInfo,
   }) {
     return TableRow(
       children: [
@@ -213,9 +233,11 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
           child: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         GestureDetector(
-          onTap: () => _showDish(dish, context),
+          onTap: () => _showDish(title, dayIndex, dish, context),
+          behavior: HitTestBehavior.translucent,
           child: Padding(
             padding: const EdgeInsets.all(8),
+
             child: Text(
               otherInfo == null ? dish?.toString() ?? '-' : otherInfo,
               style: TextStyle(color: Color(0xFF636363)),
@@ -226,8 +248,12 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
     );
   }
 
-  Future<void> _showDish(Dish? dish, BuildContext context) async {
-    if (dish == null) return;
+  Future<void> _showDish(
+    final String mealType,
+    final int dayIndex,
+    final Dish? dish,
+    final BuildContext context,
+  ) async {
     return await showDialog(
       context: context,
       builder: (context) {
@@ -236,7 +262,13 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
             content: Navigator(
               onGenerateRoute: (RouteSettings settings) {
                 return MaterialPageRoute(
-                  builder: (context) => DishDialog(dish: dish),
+                  builder:
+                      (context) => DishDialog(
+                        dish: dish,
+                        mealType: mealType,
+                        schedule: widget.ration.foodData,
+                        dayIndex: dayIndex,
+                      ),
                 );
               },
             ),
@@ -247,7 +279,7 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
   }
 }
 
-String getDayName(DateTime date, bool forTable) {
+String getDayName(final DateTime date, final bool forTable) {
   return forTable
       ? DateFormat('EEE, d').format(date)
       : DateFormat('EEE').format(date);

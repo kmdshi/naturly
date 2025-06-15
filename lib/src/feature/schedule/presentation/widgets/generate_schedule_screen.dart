@@ -46,14 +46,16 @@ class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
             if (state is ScheduleLoaded) {
               return Column(
                 children: [
-                  CurrentScheduleWidget(schedule: state.ration),
+                  CurrentScheduleWidget(ration: state.ration),
                   SizedBox(height: 15),
                   ButtonListWidget(
                     buttons: [
                       ElevatedButton(
                         onPressed:
                             () => context.read<ScheduleBloc>().add(
-                              ScheduleAddUserRation(ration: state.ration),
+                              ScheduleSaveUserRation(
+                                ration: state.ration.foodData,
+                              ),
                             ),
                         child: Text('Сохранить'),
                       ),

@@ -7,6 +7,7 @@ import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:naturly/src/core/common/models/product_model.dart';
 import 'package:naturly/src/core/common/services/food_service.dart';
 import 'package:naturly/src/feature/schedule/data/data_source/remote/schedule_remote_ds.dart';
+import 'package:naturly/src/feature/schedule/domain/models/week_ration.dart';
 import 'package:naturly/src/feature/schedule/domain/repository/schedule_repository.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
@@ -114,21 +115,18 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
   }
 
   @override
-  Future<void> addUserRation(List<DayRation> ration) async {
-    await scheduleRemoteDs.addOrUpdateUserRation(ration);
+  Future<String> addUserRation(List<DayRation> ration) async {
+    return await scheduleRemoteDs.addOrUpdateUserRation(ration);
   }
 
   @override
-  Future<List<DayRation>> getUserRation() async {
-    final userRationJson = await scheduleRemoteDs.getUserRation();
+  Future<WeekRation> getWeekUserRation() async {
+    final userRationDto = await scheduleRemoteDs.getWeekUserRation();
 
-    final List<DayRation> ration =
-        userRationJson.isNotEmpty
-            ? userRationJson.map<DayRation>((e) {
-              DayRation dayRation = DayRation.fromMap(e);
-              return dayRation;
-            }).toList()
-            : [];
+    final WeekRation ration =
+        userRationDto != null
+            ? WeekRation.fromDto(userRationDto)
+            : WeekRation.empty();
 
     return ration;
   }

@@ -12,7 +12,7 @@ final class ScheduleInitial extends ScheduleState {}
 final class ScheduleLoading extends ScheduleState {}
 
 final class ScheduleLoaded extends ScheduleState {
-  final List<DayRation> ration;
+  final WeekRation ration;
 
   const ScheduleLoaded({required this.ration});
 

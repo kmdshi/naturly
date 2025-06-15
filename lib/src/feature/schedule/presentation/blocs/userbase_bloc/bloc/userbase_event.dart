@@ -7,8 +7,9 @@ sealed class UserbaseEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class UserbaseGetUserDataEvent extends UserbaseEvent {}
+class UserbaseGetAllUserDataEvent extends UserbaseEvent {}
 
+class UserbaseGetDishesEvent extends UserbaseEvent {}
 
 class UserbaseAddUserProduct extends UserbaseEvent {
   final Product product;

@@ -6,6 +6,7 @@ import 'package:naturly/src/core/common/extensions/datetime_extension.dart';
 
 import 'package:naturly/src/core/common/models/day_ration_model.dart';
 import 'package:naturly/src/core/common/models/human_profile.dart';
+import 'package:naturly/src/feature/schedule/domain/models/week_ration.dart';
 import 'package:naturly/src/feature/schedule/domain/repository/schedule_repository.dart';
 
 part 'schedule_event.dart';
@@ -16,8 +17,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ScheduleBloc({required this.scheduleRepository}) : super(ScheduleInitial()) {
     on<ScheduleGenerateDayRation>(_generateDayRation);
     on<ScheduleGenerateWeekRation>(_generateWeekRation);
-    on<ScheduleAddUserRation>(_saveRation);
-    on<ScheduleGetUserRationEvent>(_getUserRation);
+    on<ScheduleSaveUserRation>(_saveRation);
+    on<ScheduleGetWeekUserRationEvent>(_getWeekUserRation);
   }
 
   Future<void> _generateDayRation(
@@ -26,9 +27,11 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ) async {
     try {
       List<DayRation> weekRation = [];
+      String currentShareId = '';
 
       if (state is ScheduleLoaded) {
-        weekRation = (state as ScheduleLoaded).ration;
+        weekRation = (state as ScheduleLoaded).ration.foodData;
+        currentShareId = (state as ScheduleLoaded).ration.shareId;
       }
 
       emit(ScheduleLoading());
@@ -47,7 +50,12 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         weekRation.add(newRation);
       }
 
-      emit(ScheduleLoaded(ration: weekRation));
+      final updatedWeekRation = WeekRation(
+        shareId: currentShareId,
+        foodData: weekRation,
+      );
+
+      emit(ScheduleLoaded(ration: updatedWeekRation));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }
@@ -60,42 +68,41 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     try {
       emit(ScheduleLoading());
 
-      final newRation = await scheduleRepository.generateWeekRation(
+      final generatedRation = await scheduleRepository.generateWeekRation(
         event.person,
       );
 
-      emit(ScheduleLoaded(ration: newRation));
+      final preRation = WeekRation(shareId: '', foodData: generatedRation);
+
+      emit(ScheduleLoaded(ration: preRation));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }
   }
 
   Future<void> _saveRation(
-    ScheduleAddUserRation event,
+    ScheduleSaveUserRation event,
     Emitter<ScheduleState> emit,
   ) async {
     try {
-      List<DayRation> weekRation = [];
-
-      if (state is ScheduleLoaded) {
-        weekRation = (state as ScheduleLoaded).ration;
-      }
-
       emit(ScheduleLoading());
-      await scheduleRepository.addUserRation(weekRation);
-      emit(ScheduleLoaded(ration: weekRation));
+      final shareKey = await scheduleRepository.addUserRation(event.ration);
+
+      final doneRation = WeekRation(shareId: shareKey, foodData: event.ration);
+
+      emit(ScheduleLoaded(ration: doneRation));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }
   }
 
-  Future<void> _getUserRation(
-    ScheduleGetUserRationEvent event,
+  Future<void> _getWeekUserRation(
+    ScheduleGetWeekUserRationEvent event,
     Emitter<ScheduleState> emit,
   ) async {
     try {
       emit(ScheduleLoading());
-      final userRation = await scheduleRepository.getUserRation();
+      final userRation = await scheduleRepository.getWeekUserRation();
       emit(ScheduleLoaded(ration: userRation));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));

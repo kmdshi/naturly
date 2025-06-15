@@ -409,12 +409,14 @@ class FoodService {
     if (availabilityPercentage >= 0.6) {
       return currentDish.copyWith(
         totalMissingCost: costNeeded,
-        missingProducts: productsNeeded,
+        //  missingProducts: productsNeeded,
+        missingProducts: [],
       );
     } else {
       return currentDish.copyWith(
         totalMissingCost: currentDish.totalPrice,
-        missingProducts: currentDish.products,
+        // missingProducts: currentDish.products,
+        missingProducts: [],
       );
     }
   }
@@ -636,5 +638,14 @@ class FoodService {
         }
       }
     }
+  }
+
+  int recalculateCalories(DayRation day) {
+    final morning = day.morningDish?.calories ?? 0;
+    final lunch = day.lunchDish?.calories ?? 0;
+    final snack = day.snackDish?.calories ?? 0;
+    final dinner = day.dinnerDish?.calories ?? 0;
+
+    return morning + lunch + snack + dinner;
   }
 }

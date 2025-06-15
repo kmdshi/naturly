@@ -21,7 +21,7 @@ class UserBaseScreen extends StatefulWidget {
 class _UserBaseScreenState extends State<UserBaseScreen> {
   @override
   void initState() {
-    context.read<UserbaseBloc>().add(UserbaseGetUserDataEvent());
+    context.read<UserbaseBloc>().add(UserbaseGetAllUserDataEvent());
     super.initState();
   }
 
@@ -96,7 +96,7 @@ class _UserBaseScreenState extends State<UserBaseScreen> {
             });
 
             Future.delayed(Duration(milliseconds: 100), () {
-              context.read<UserbaseBloc>().add(UserbaseGetUserDataEvent());
+              context.read<UserbaseBloc>().add(UserbaseGetAllUserDataEvent());
             });
 
             return SizedBox.shrink();

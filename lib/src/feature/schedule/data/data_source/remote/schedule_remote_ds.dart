@@ -5,6 +5,7 @@ import 'package:naturly/src/core/common/extensions/datetime_extension.dart';
 import 'package:naturly/src/core/common/models/day_ration_model.dart';
 import 'package:naturly/src/core/common/models/dish_model.dart';
 import 'package:naturly/src/core/common/models/product_model.dart';
+import 'package:naturly/src/feature/schedule/data/dto/week_ration_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ScheduleSupabaseRemoteDS {
@@ -35,7 +36,7 @@ class ScheduleSupabaseRemoteDS {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getUserRation() async {
+  Future<WeekRationDto?> getWeekUserRation() async {
     try {
       final userId = supabase.auth.currentUser?.id;
       final weekKey = weekKeyFromDate(DateTime.now());
@@ -47,7 +48,7 @@ class ScheduleSupabaseRemoteDS {
       final response =
           await supabase
               .from('Rations')
-              .select('food_data')
+              .select('share_id, food_data')
               .eq('usid', userId)
               .eq('week_key', weekKey)
               .maybeSingle();
@@ -55,18 +56,21 @@ class ScheduleSupabaseRemoteDS {
       final weekRation = List<Map<String, dynamic>>.from(
         response?['food_data'] ?? [],
       );
-      return weekRation;
+      final week_share_key = response?['share_id'] ?? '';
+      return WeekRationDto(shareId: week_share_key, foodData: weekRation);
     } catch (e) {
       throw e;
     }
   }
 
-  Future<void> addOrUpdateUserRation(List<DayRation> ration) async {
+  Future<String> addOrUpdateUserRation(List<DayRation> ration) async {
     final userId = supabase.auth.currentUser?.id;
     final today = DateTime.now();
     if (userId == null) throw Exception("User not authenticated");
 
     final weekKey = weekKeyFromDate(today);
+
+    final shareKey = await nanoid(8);
 
     final existing =
         await supabase
@@ -81,9 +85,9 @@ class ScheduleSupabaseRemoteDS {
         'usid': userId,
         'food_data': ration.map((r) => r.toMap()).toList(),
         'week_key': weekKey,
-        'share_id': await nanoid(8),
+        'share_id': shareKey,
       });
-      return;
+      return shareKey;
     }
 
     final data = List<Map<String, dynamic>>.from(existing['food_data'] ?? []);
@@ -102,6 +106,8 @@ class ScheduleSupabaseRemoteDS {
         .update({'food_data': data})
         .eq('usid', userId)
         .eq('week_key', weekKey);
+
+    return shareKey;
   }
 
   String weekKeyFromDate(DateTime date) {
