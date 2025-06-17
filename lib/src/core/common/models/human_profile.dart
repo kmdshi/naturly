@@ -2,6 +2,7 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class Human {
+  final String nickName;
   final int age;
   final String sex;
   final int height;
@@ -12,6 +13,7 @@ class Human {
   late final double activityMultiplier;
 
   Human({
+    required this.nickName,
     required this.age,
     required this.height,
     required this.weight,
@@ -117,6 +119,7 @@ class Human {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'nickname': nickName,
       'age': age,
       'sex': sex,
       'height': height,
@@ -132,6 +135,7 @@ class Human {
 
   factory Human.fromMap(Map<String, dynamic> map) {
     return Human(
+      nickName: map['nickname'] as String,
       age: map['age'] as int,
       sex: map['sex'] as String,
       height: map['height'] as int,

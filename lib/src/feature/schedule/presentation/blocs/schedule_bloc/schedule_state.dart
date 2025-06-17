@@ -13,7 +13,8 @@ final class ScheduleLoading extends ScheduleState {}
 
 final class ScheduleLoaded extends ScheduleState {
   final WeekRation ration;
-  const ScheduleLoaded({required this.ration});
+  final Human person;
+  const ScheduleLoaded({required this.ration, required this.person});
 
   @override
   List<Object> get props => [ration];

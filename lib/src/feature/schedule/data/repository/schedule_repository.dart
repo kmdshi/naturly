@@ -143,4 +143,11 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
 
     return rations;
   }
+
+  @override
+  Future<Human> getPerson() async {
+    final person = await scheduleRemoteDs.getPerson();
+
+    return Human.fromMap(person);
+  }
 }

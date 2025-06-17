@@ -179,6 +179,20 @@ class ScheduleSupabaseRemoteDS {
     }
   }
 
+  Future<Map<String, dynamic>> getPerson() async {
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    try {
+      return await supabase.from('Profiles').select().eq('id', userId).single();
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<void> deleteUserDish(Dish dish) async {
     final userId = supabase.auth.currentUser?.id;
 

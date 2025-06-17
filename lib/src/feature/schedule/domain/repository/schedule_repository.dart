@@ -6,6 +6,7 @@ abstract class ScheduleRepository {
   Future<DayRation> generateDayRation(String day, int dayIndex, Human person);
   Future<List<DayRation>> generateWeekRation(Human person);
   Future<WeekRation> getWeekUserRation();
+  Future<Human> getPerson();
   Future<List<WeekRation>> getAllWeeksUserRation();
   Future<String> addUserRation(List<DayRation> ration);
 }

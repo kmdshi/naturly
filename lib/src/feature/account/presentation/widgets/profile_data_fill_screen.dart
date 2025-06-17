@@ -15,6 +15,7 @@ class ProfileDataFillScreen extends StatefulWidget {
 }
 
 class _ProfileDataFillScreenState extends State<ProfileDataFillScreen> {
+  ValueNotifier<String> nicknameNotifier = ValueNotifier<String>('');
   ValueNotifier<String> ageNotifier = ValueNotifier<String>('');
   ValueNotifier<String> weightNotifier = ValueNotifier<String>('');
   ValueNotifier<String> heightNotifier = ValueNotifier<String>('');
@@ -28,6 +29,7 @@ class _ProfileDataFillScreenState extends State<ProfileDataFillScreen> {
 
   @override
   void dispose() {
+    nicknameNotifier.dispose();
     ageNotifier.dispose();
     weightNotifier.dispose();
     heightNotifier.dispose();
@@ -54,6 +56,11 @@ class _ProfileDataFillScreenState extends State<ProfileDataFillScreen> {
               children: [
                 Text(
                   'Давайте заполним данные о вас...(все анонимно, они пригодятся для всевозможных рассчетов.)',
+                ),
+                OptionWidget(
+                  title: 'Как вас называть?',
+                  isTextQuestion: true,
+                  value: nicknameNotifier,
                 ),
                 OptionWidget(
                   title: 'Какой ваш возраст?',
@@ -98,7 +105,8 @@ class _ProfileDataFillScreenState extends State<ProfileDataFillScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (ageNotifier.value.isEmpty ||
+                    if (nicknameNotifier.value.isEmpty ||
+                        ageNotifier.value.isEmpty ||
                         weightNotifier.value.isEmpty ||
                         heightNotifier.value.isEmpty ||
                         activityLevelNotifier.value.isEmpty ||
@@ -116,6 +124,7 @@ class _ProfileDataFillScreenState extends State<ProfileDataFillScreen> {
                             .toSet();
 
                     final user = Human(
+                      nickName: nicknameNotifier.value,
                       age: int.parse(ageNotifier.value),
                       height: int.parse(heightNotifier.value),
                       weight: int.parse(weightNotifier.value),

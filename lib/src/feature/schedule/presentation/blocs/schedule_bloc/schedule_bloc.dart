@@ -51,12 +51,14 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         weekRation.add(newRation);
       }
 
+      final person = await scheduleRepository.getPerson();
+
       final updatedWeekRation = WeekRation(
         shareId: currentShareId,
         foodData: weekRation,
       );
 
-      emit(ScheduleLoaded(ration: updatedWeekRation));
+      emit(ScheduleLoaded(ration: updatedWeekRation, person: person));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }
@@ -90,8 +92,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       );
 
       final preRation = WeekRation(shareId: '', foodData: generatedRation);
+      final person = await scheduleRepository.getPerson();
 
-      emit(ScheduleLoaded(ration: preRation));
+      emit(ScheduleLoaded(ration: preRation, person: person));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }
@@ -106,8 +109,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       final shareKey = await scheduleRepository.addUserRation(event.ration);
 
       final doneRation = WeekRation(shareId: shareKey, foodData: event.ration);
+      final person = await scheduleRepository.getPerson();
 
-      emit(ScheduleLoaded(ration: doneRation));
+      emit(ScheduleLoaded(ration: doneRation, person: person));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }
@@ -120,7 +124,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     try {
       emit(ScheduleLoading());
       final userRation = await scheduleRepository.getWeekUserRation();
-      emit(ScheduleLoaded(ration: userRation));
+      final person = await scheduleRepository.getPerson();
+
+      emit(ScheduleLoaded(ration: userRation, person: person));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }

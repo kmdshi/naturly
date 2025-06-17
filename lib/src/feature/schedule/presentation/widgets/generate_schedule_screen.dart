@@ -3,7 +3,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/button_list_widget.dart';
 import 'package:naturly/src/core/widget/current_schedule_widget.dart';
@@ -17,16 +16,6 @@ class GenerateScheduleScreen extends StatefulWidget {
 }
 
 class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
-  final me = Human(
-    age: 17,
-    height: 187,
-    weight: 68,
-    goal: 'lose',
-    restrictions: {},
-    sex: 'male',
-    activityLevel: 'Sedentary',
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +35,7 @@ class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
             if (state is ScheduleLoaded) {
               return Column(
                 children: [
-                  CurrentScheduleWidget(ration: state.ration, isView: true,),
+                  CurrentScheduleWidget(ration: state.ration, isView: true),
                   SizedBox(height: 15),
                   ButtonListWidget(
                     buttons: [
@@ -62,14 +51,14 @@ class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
                       ElevatedButton(
                         onPressed:
                             () => context.read<ScheduleBloc>().add(
-                              ScheduleGenerateDayRation(person: me),
+                              ScheduleGenerateDayRation(person: state.person),
                             ),
                         child: Text('Сгенерировать на день'),
                       ),
                       ElevatedButton(
                         onPressed:
                             () => context.read<ScheduleBloc>().add(
-                              ScheduleGenerateWeekRation(person: me),
+                              ScheduleGenerateWeekRation(person: state.person),
                             ),
 
                         child: Text('Сгенерировать на неделю'),
@@ -87,24 +76,24 @@ class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
     );
   }
 
-  Future<void> _showOptionsDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Выберите параметры для генерации'),
-          content: const SingleChildScrollView(
-            child: Column(children: [Text('Тест')]),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Сгенерировать'),
-              onPressed: () async {},
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _showOptionsDialog() async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Выберите параметры для генерации'),
+  //         content: const SingleChildScrollView(
+  //           child: Column(children: [Text('Тест')]),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: const Text('Сгенерировать'),
+  //             onPressed: () async {},
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }
