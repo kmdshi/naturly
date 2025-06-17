@@ -59,7 +59,6 @@ class _LoginScreenDesktopState extends State<LoginScreenDesktop> {
                   ),
                 ),
                 SizedBox(height: 7),
-
                 Text(
                   'Welcome back! Please enter your details.',
                   style: TextStyle(
@@ -93,9 +92,7 @@ class _LoginScreenDesktopState extends State<LoginScreenDesktop> {
                     hintText: 'Enter your password',
                   ),
                 ),
-
                 SizedBox(height: 10),
-
                 ConstrainedBox(
                   constraints: BoxConstraints(
                     maxWidth: 400,

@@ -55,7 +55,6 @@ class _RegistrationScreenMobileState extends State<RegistrationScreenMobile> {
                 ),
               ),
               SizedBox(height: 7),
-
               Text(
                 'Start your jounery with us.',
                 style: TextStyle(

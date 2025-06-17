@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         body: BlocBuilder<AccountBloc, AccountState>(
+          buildWhen: (previous, current) => current is! AccountFailure,
           builder: (context, state) {
             if (state is AccountAuthorized) {
               Future.microtask(() {
