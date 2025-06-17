@@ -26,6 +26,9 @@ class ScheduleGenerateWeekRation extends ScheduleEvent {
 
 class ScheduleGetWeekUserRationEvent extends ScheduleEvent {}
 
+class ScheduleGetAllWeeksUserRationEvent extends ScheduleEvent {}
+
+
 class ScheduleSaveUserRation extends ScheduleEvent {
   final List<DayRation> ration;
   const ScheduleSaveUserRation({required this.ration});

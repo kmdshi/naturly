@@ -194,7 +194,7 @@ packages:
     source: hosted
     version: "2.0.3"
   clock:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: clock
       sha256: fddb70d9b5277016c77a80201021d40a2247104d9f4aa7bab7157b7e3f05b84b
@@ -339,6 +339,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.41"
+  flutter_swipe_action_cell:
+    dependency: "direct main"
+    description:
+      name: flutter_swipe_action_cell
+      sha256: f09036bf30fea826d9ee7e86f72f040011f42783e8c629a1a549587b0e057c53
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.5"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -360,14 +368,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
-  glassmorphism:
-    dependency: "direct main"
-    description:
-      name: glassmorphism
-      sha256: c0f65ea2681d4ee6d4125b947946d983335cd44765e835cdc039894b076a6e31
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   glob:
     dependency: transitive
     description:
@@ -444,10 +444,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.2"
+    version: "0.19.0"
   io:
     dependency: transitive
     description:

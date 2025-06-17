@@ -37,6 +37,8 @@ class AppRouter extends RootStackRouter {
             AutoRoute(path: '', page: ScheduleRoute.page),
             AutoRoute(path: 'generate', page: GenerateScheduleRoute.page),
             AutoRoute(path: 'userbase', page: UserBaseRoute.page),
+            AutoRoute(path: 'history', page: HistoryRoute.page),
+            AutoRoute(path: 'week', page: UserHistoryWeekRoute.page),
           ],
         ),
         AutoRoute(

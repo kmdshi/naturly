@@ -3,13 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:naturly/src/core/common/layout/layout.dart';
 import 'package:naturly/src/core/common/models/dish_model.dart';
-import 'package:naturly/src/feature/schedule/domain/models/week_ration.dart';
+import 'package:naturly/src/core/common/models/week_ration.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/dish_dialog.dart';
 
 class CurrentScheduleWidget extends StatefulWidget {
   final WeekRation ration;
+  final bool isView;
 
-  const CurrentScheduleWidget({super.key, required this.ration});
+  const CurrentScheduleWidget({
+    super.key,
+    required this.ration,
+    required this.isView,
+  });
 
   @override
   State<CurrentScheduleWidget> createState() => _CurrentScheduleWidgetState();
@@ -59,15 +64,37 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                       _buildMobileRow(
                         index,
                         'Завтрак',
+                        widget.isView,
+
                         day.morningDish,
                         context,
                       ),
-                      _buildMobileRow(index, 'Обед', day.lunchDish, context),
-                      _buildMobileRow(index, 'Перекус', day.snackDish, context),
-                      _buildMobileRow(index, 'Ужин', day.dinnerDish, context),
+                      _buildMobileRow(
+                        index,
+                        'Обед',
+                        widget.isView,
+                        day.lunchDish,
+                        context,
+                      ),
+                      _buildMobileRow(
+                        index,
+                        'Перекус',
+                        widget.isView,
+                        day.snackDish,
+                        context,
+                      ),
+                      _buildMobileRow(
+                        index,
+                        'Ужин',
+                        widget.isView,
+                        day.dinnerDish,
+                        context,
+                      ),
                       _buildMobileRow(
                         index,
                         'Калории',
+                        widget.isView,
+
                         null,
                         context,
                         otherInfo: day.totalCcal.toString(),
@@ -81,16 +108,18 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                         icon: Icon(Icons.arrow_back),
                         onPressed: () => _updateCurrentPageIndex(index - 1),
                       ),
-                      ElevatedButton(
-                        onPressed:
-                            () async => Clipboard.setData(
-                              ClipboardData(
-                                text:
-                                    "http://localhost:63338/#/schedule/share?id=${widget.ration.shareId}",
-                              ),
-                            ),
-                        child: Text('Поделиться рационом'),
-                      ),
+                      widget.isView
+                          ? SizedBox.shrink()
+                          : ElevatedButton(
+                            onPressed:
+                                () async => Clipboard.setData(
+                                  ClipboardData(
+                                    text:
+                                        "http://localhost:5500/#/schedule/share?id=${widget.ration.shareId}",
+                                  ),
+                                ),
+                            child: Text('Поделиться рационом'),
+                          ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
                         onPressed: () => _updateCurrentPageIndex(index + 1),
@@ -116,6 +145,7 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
             children: [
               _buildDesktopRow(
                 'День',
+                widget.isView,
                 null,
                 context,
                 staticValues:
@@ -125,31 +155,43 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
               ),
               _buildDesktopRow(
                 'Завтрак',
+                widget.isView,
+
                 widget.ration.foodData.map((e) => e.morningDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Завтрак',
+                widget.isView,
+
                 widget.ration.foodData.map((e) => e.morningDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Обед',
+                widget.isView,
+
                 widget.ration.foodData.map((e) => e.lunchDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Перекус',
+                widget.isView,
+
                 widget.ration.foodData.map((e) => e.snackDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Ужин',
+                widget.isView,
+
                 widget.ration.foodData.map((e) => e.dinnerDish).toList(),
                 context,
               ),
               _buildDesktopRow(
                 'Калории',
+                widget.isView,
+
                 null,
                 context,
                 staticValues:
@@ -173,10 +215,11 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
   }
 
   TableRow _buildDesktopRow(
-    String title,
-    List<Dish?>? dishes,
-    BuildContext context, {
-    List<String?>? staticValues,
+    final String title,
+    final bool isView,
+    final List<Dish?>? dishes,
+    final BuildContext context, {
+    final List<String?>? staticValues,
   }) {
     return TableRow(
       children: [
@@ -200,12 +243,15 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
               )
               : InkWell(
                 onTap:
-                    () => _showDish(
-                      dishes[i]?.mealType ?? '',
-                      i,
-                      i < dishes.length ? dishes[i] : null,
-                      context,
-                    ),
+                    () =>
+                        isView
+                            ? null
+                            : _showDish(
+                              dishes[i]?.mealType ?? '',
+                              i,
+                              i < dishes.length ? dishes[i] : null,
+                              context,
+                            ),
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   alignment: Alignment.center,
@@ -222,6 +268,8 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
   TableRow _buildMobileRow(
     final int dayIndex,
     final String title,
+    final bool isView,
+
     final Dish? dish,
     final BuildContext context, {
     final String? otherInfo,
@@ -233,7 +281,8 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
           child: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         GestureDetector(
-          onTap: () => _showDish(title, dayIndex, dish, context),
+          onTap:
+              () => isView ? null : _showDish(title, dayIndex, dish, context),
           behavior: HitTestBehavior.translucent,
           child: Padding(
             padding: const EdgeInsets.all(8),

@@ -27,6 +27,8 @@ class AccountLogInEvent extends AccountEvent {
   List<Object> get props => [email, password];
 }
 
+class GetTodayDataEvent extends AccountEvent {}
+
 class AccountFillEvent extends AccountEvent {
   final Human user;
 

@@ -6,7 +6,7 @@ import 'package:naturly/src/core/common/extensions/datetime_extension.dart';
 
 import 'package:naturly/src/core/common/models/day_ration_model.dart';
 import 'package:naturly/src/core/common/models/human_profile.dart';
-import 'package:naturly/src/feature/schedule/domain/models/week_ration.dart';
+import 'package:naturly/src/core/common/models/week_ration.dart';
 import 'package:naturly/src/feature/schedule/domain/repository/schedule_repository.dart';
 
 part 'schedule_event.dart';
@@ -19,6 +19,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     on<ScheduleGenerateWeekRation>(_generateWeekRation);
     on<ScheduleSaveUserRation>(_saveRation);
     on<ScheduleGetWeekUserRationEvent>(_getWeekUserRation);
+    on<ScheduleGetAllWeeksUserRationEvent>(_getAllUserWeeks);
   }
 
   Future<void> _generateDayRation(
@@ -56,6 +57,22 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       );
 
       emit(ScheduleLoaded(ration: updatedWeekRation));
+    } catch (e) {
+      emit(ScheduleFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _getAllUserWeeks(
+    ScheduleGetAllWeeksUserRationEvent event,
+    Emitter<ScheduleState> emit,
+  ) async {
+    try {
+      emit(ScheduleLoading());
+
+      final userRationsHistory =
+          await scheduleRepository.getAllWeeksUserRation();
+
+      emit(ScheduleHistoryLoaded(history: userRationsHistory));
     } catch (e) {
       emit(ScheduleFailure(message: e.toString()));
     }

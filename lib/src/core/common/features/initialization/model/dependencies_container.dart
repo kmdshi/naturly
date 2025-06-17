@@ -2,6 +2,7 @@
 import 'package:logger/logger.dart';
 import 'package:naturly/src/core/common/cubit/auth_cubit.dart';
 import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dart';
+import 'package:naturly/src/feature/share_meal/presentation/bloc/share_meal_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:naturly/src/core/common/error_reporter/error_reporter.dart';
@@ -22,6 +23,7 @@ class DependenciesContainer {
     required this.authCubit,
     required this.errorReporter,
     required this.settingsBloc,
+    required this.shareMealBloc,
     required this.packageInfo,
   });
 
@@ -30,6 +32,8 @@ class DependenciesContainer {
   final ApplicationConfig config;
 
   final AppSettingsBloc appSettingsBloc;
+
+  final ShareMealBloc shareMealBloc;
 
   final AccountBloc accountBloc;
 

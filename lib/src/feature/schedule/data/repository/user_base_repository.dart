@@ -38,4 +38,24 @@ class UserBaseRepositoryImpl extends UserBaseRepository {
 
     return userProducts;
   }
+
+  @override
+  Future<void> deleteUserDish(Dish dish) async {
+    await scheduleRemoteDs.deleteUserDish(dish);
+  }
+
+  @override
+  Future<void> deleteUserProduct(Product product) async {
+    await scheduleRemoteDs.deleteUserProduct(product);
+  }
+
+  @override
+  Future<void> editUserDish(Dish newDish, String oldTitle) async {
+    await scheduleRemoteDs.editUserDish(newDish, oldTitle);
+  }
+
+  @override
+  Future<void> editUserProduct(Product newProduct, String oldTitle) async {
+    await scheduleRemoteDs.editUserProduct(newProduct, oldTitle);
+  }
 }

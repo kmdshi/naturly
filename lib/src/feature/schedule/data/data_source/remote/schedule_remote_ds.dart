@@ -5,7 +5,7 @@ import 'package:naturly/src/core/common/extensions/datetime_extension.dart';
 import 'package:naturly/src/core/common/models/day_ration_model.dart';
 import 'package:naturly/src/core/common/models/dish_model.dart';
 import 'package:naturly/src/core/common/models/product_model.dart';
-import 'package:naturly/src/feature/schedule/data/dto/week_ration_dto.dart';
+import 'package:naturly/src/core/common/models/week_ration_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ScheduleSupabaseRemoteDS {
@@ -16,8 +16,9 @@ class ScheduleSupabaseRemoteDS {
     try {
       final products = await supabase
           .from('Products')
-          .select()
+          .select('*')
           .filter('id', 'eq', supabase.auth.currentUser?.id.toString());
+
       return products;
     } catch (e) {
       throw e;
@@ -28,7 +29,7 @@ class ScheduleSupabaseRemoteDS {
     try {
       final products = await supabase
           .from('Dishes')
-          .select()
+          .select('*')
           .filter('id', 'eq', supabase.auth.currentUser?.id.toString());
       return products;
     } catch (e) {
@@ -36,7 +37,7 @@ class ScheduleSupabaseRemoteDS {
     }
   }
 
-  Future<WeekRationDto?> getWeekUserRation() async {
+  Future<WeekRationDto> getWeekUserRation() async {
     try {
       final userId = supabase.auth.currentUser?.id;
       final weekKey = weekKeyFromDate(DateTime.now());
@@ -58,6 +59,35 @@ class ScheduleSupabaseRemoteDS {
       );
       final week_share_key = response?['share_id'] ?? '';
       return WeekRationDto(shareId: week_share_key, foodData: weekRation);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<List<WeekRationDto>> getAllWeeksUserRation() async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+
+      if (userId == null) {
+        throw Exception("User not authenticated");
+      }
+
+      final response = await supabase
+          .from('Rations')
+          .select('share_id, food_data')
+          .eq('usid', userId);
+
+      final weekRationDtoList =
+          response.map<WeekRationDto>((e) {
+            final rawFoodData = e['food_data'] ?? [];
+
+            return WeekRationDto(
+              shareId: e['share_id'] ?? '',
+              foodData: List<Map<String, dynamic>>.from(rawFoodData),
+            );
+          }).toList();
+
+      return weekRationDtoList;
     } catch (e) {
       throw e;
     }
@@ -92,20 +122,31 @@ class ScheduleSupabaseRemoteDS {
 
     final data = List<Map<String, dynamic>>.from(existing['food_data'] ?? []);
 
-    for (final newDay in ration) {
-      final index = data.indexWhere((d) => d['date'] == newDay.toMap()['date']);
-      if (index != -1) {
-        data[index] = newDay.toMap();
-      } else {
-        data.add(newDay.toMap());
+    if (data.isNotEmpty) {
+      for (final newDay in ration) {
+        final index = data.indexWhere(
+          (d) => d['date'] == newDay.toMap()['date'],
+        );
+        if (index != -1) {
+          data[index] = newDay.toMap();
+        } else {
+          data.add(newDay.toMap());
+        }
       }
-    }
+      await supabase
+          .from('Rations')
+          .update({'food_data': data})
+          .eq('usid', userId)
+          .eq('week_key', weekKey);
+    } else {
+      final r = ration.map((e) => e.toMap()).toList();
 
-    await supabase
-        .from('Rations')
-        .update({'food_data': data})
-        .eq('usid', userId)
-        .eq('week_key', weekKey);
+      await supabase
+          .from('Rations')
+          .update({'food_data': r})
+          .eq('usid', userId)
+          .eq('week_key', weekKey);
+    }
 
     return shareKey;
   }
@@ -133,6 +174,76 @@ class ScheduleSupabaseRemoteDS {
       await supabase.from('Dishes').insert([
         {'id': supabase.auth.currentUser?.id.toString(), ...mapProduct},
       ]);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> deleteUserDish(Dish dish) async {
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    try {
+      await supabase.from('Dishes').delete().eq('title', dish.title);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> editUserDish(Dish newDish, String oldTitle) async {
+    final userId = supabase.auth.currentUser?.id;
+    final mapDish = newDish.toMap();
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    try {
+      await supabase
+          .from('Dishes')
+          .update(mapDish)
+          .eq('title', oldTitle)
+          .eq('id', userId);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> editUserProduct(Product product, String oldTitle) async {
+    final userId = supabase.auth.currentUser?.id;
+    final mapProduct = product.toMap();
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    try {
+      await supabase
+          .from('Products')
+          .update(mapProduct)
+          .eq('title', oldTitle)
+          .eq('id', userId);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> deleteUserProduct(Product product) async {
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception("User not authenticated");
+    }
+
+    try {
+      await supabase
+          .from('Products')
+          .delete()
+          .eq('title', product.title)
+          .eq('id', userId);
     } catch (e) {
       throw e;
     }

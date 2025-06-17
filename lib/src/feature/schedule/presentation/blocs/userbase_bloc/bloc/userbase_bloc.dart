@@ -16,6 +16,89 @@ class UserbaseBloc extends Bloc<UserbaseEvent, UserbaseState> {
     on<UserbaseAddUserProduct>(_addUserProduct);
     on<UserbaseAddUserDish>(_addUserDish);
     on<UserbaseGetDishesEvent>(_getUserDishes);
+    on<UserbaseGetProductsEvent>(_getProducts);
+    on<EditUserDishEvent>(_onEditUserDish);
+    on<EditUserProductEvent>(_onEditUserProduct);
+    on<DeleteUserDishEvent>(_onDeleteUserDish);
+    on<DeleteUserProductEvent>(_onDeleteUserProduct);
+  }
+
+  Future<void> _onDeleteUserProduct(
+    DeleteUserProductEvent event,
+    Emitter<UserbaseState> emit,
+  ) async {
+    try {
+      await userBaseRepository.deleteUserProduct(event.product);
+
+      final products = await userBaseRepository.getUserProducts();
+
+      emit(UserbaseLoaded(products: products, dishes: []));
+    } catch (e) {
+      emit(UserbaseFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteUserDish(
+    DeleteUserDishEvent event,
+    Emitter<UserbaseState> emit,
+  ) async {
+    try {
+      await userBaseRepository.deleteUserDish(event.dish);
+
+      final dishes = await userBaseRepository.getUserDishes();
+
+      emit(UserbaseLoaded(products: [], dishes: dishes));
+    } catch (e) {
+      emit(UserbaseFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _onEditUserProduct(
+    EditUserProductEvent event,
+    Emitter<UserbaseState> emit,
+  ) async {
+    try {
+      await userBaseRepository.editUserProduct(
+        event.newProduct,
+        event.oldTitle,
+      );
+
+      final products = await userBaseRepository.getUserProducts();
+
+      emit(UserbaseLoaded(products: products, dishes: []));
+    } catch (e) {
+      emit(UserbaseFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _onEditUserDish(
+    EditUserDishEvent event,
+    Emitter<UserbaseState> emit,
+  ) async {
+    try {
+      await userBaseRepository.editUserDish(event.newDish, event.oldTitle);
+
+      final dishes = await userBaseRepository.getUserDishes();
+      final products = await userBaseRepository.getUserProducts();
+
+      emit(UserbaseLoaded(products: products, dishes: dishes));
+    } catch (e) {
+      emit(UserbaseFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _getProducts(
+    UserbaseGetProductsEvent event,
+    Emitter<UserbaseState> emit,
+  ) async {
+    try {
+      emit(UserbaseLoading());
+      final products = await userBaseRepository.getUserProducts();
+
+      emit(UserbaseLoaded(products: products, dishes: []));
+    } catch (e) {
+      emit(UserbaseFailure(message: e.toString()));
+    }
   }
 
   Future<void> _getUserDishes(

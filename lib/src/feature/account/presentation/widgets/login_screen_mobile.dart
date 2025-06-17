@@ -64,9 +64,16 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
               ),
             ),
             SizedBox(height: 30),
-            TextInputWrapper(
-              controller: emailController,
-              hintText: 'Enter your email',
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 400,
+                minHeight: 42,
+                maxHeight: 42,
+              ),
+              child: TextInputWrapper(
+                controller: emailController,
+                hintText: 'Enter your email',
+              ),
             ),
             SizedBox(height: 15),
             ConstrainedBox(

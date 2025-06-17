@@ -11,6 +11,7 @@ import 'package:naturly/src/core/common/features/settings/widget/settings_scope.
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bloc/userbase_bloc.dart';
 import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dart';
+import 'package:naturly/src/feature/share_meal/presentation/bloc/share_meal_bloc.dart';
 
 class MaterialContext extends StatelessWidget {
   const MaterialContext({super.key});
@@ -33,6 +34,9 @@ class MaterialContext extends StatelessWidget {
         ),
         BlocProvider<ScheduleBloc>(
           create: (context) => DependenciesScope.of(context).scheduleBloc,
+        ),
+        BlocProvider<ShareMealBloc>(
+          create: (context) => DependenciesScope.of(context).shareMealBloc,
         ),
         BlocProvider<UserbaseBloc>(
           create: (context) => DependenciesScope.of(context).userbaseBloc,

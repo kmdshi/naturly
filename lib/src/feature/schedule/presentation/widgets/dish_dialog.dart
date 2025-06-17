@@ -115,7 +115,7 @@ class _DishDialogState extends State<DishDialog> {
     Dish? snack = widget.mealType == 'Перекус' ? null : currentDay.snackDish;
     Dish? dinner = widget.mealType == 'Ужин' ? null : currentDay.dinnerDish;
 
-    final updatedDay = DayRation( 
+    final updatedDay = DayRation(
       day: currentDay.day,
       dayIndex: currentDay.dayIndex,
       morningDish: morning,
@@ -207,8 +207,7 @@ class _ChangeDataAlertScreenState extends State<ChangeDataAlertScreen> {
     Dish? morning =
         widget.mealType == 'Завтрак' ? newDish : currentDay.morningDish;
     Dish? lunch = widget.mealType == 'Обед' ? newDish : currentDay.lunchDish;
-    Dish? snack =
-        widget.mealType == 'Перекус' ? newDish : currentDay.snackDish;
+    Dish? snack = widget.mealType == 'Перекус' ? newDish : currentDay.snackDish;
     Dish? dinner = widget.mealType == 'Ужин' ? newDish : currentDay.dinnerDish;
 
     final updatedDay = currentDay.copyWith(

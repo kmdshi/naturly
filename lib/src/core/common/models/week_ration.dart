@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:naturly/src/core/common/models/day_ration_model.dart';
-import 'package:naturly/src/feature/schedule/data/dto/week_ration_dto.dart';
+import 'package:naturly/src/core/common/models/week_ration_dto.dart';
 
 class WeekRation extends Equatable {
   final String shareId;

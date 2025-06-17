@@ -6,7 +6,10 @@ import 'package:naturly/src/core/widget/alert_snackbar.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bloc/userbase_bloc.dart';
 
 class ProductFormWidget extends StatefulWidget {
-  const ProductFormWidget({super.key});
+  final Product? product;
+
+  final bool isEdit;
+  const ProductFormWidget({super.key, this.isEdit = false, this.product});
 
   @override
   State<ProductFormWidget> createState() => _ProductFormWidgetState();
@@ -22,6 +25,24 @@ class _ProductFormWidgetState extends State<ProductFormWidget> {
   final TextEditingController _quantityController = TextEditingController();
 
   ProductGroup _selectedGroup = ProductGroup.grainsAndPotatoes;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final p = widget.product;
+    if (widget.isEdit && p != null) {
+      _titleController.text = p.title;
+      _priceController.text = p.price.toString();
+      _proteinController.text = p.protein.toString();
+      _fatsController.text = p.fats.toString();
+      _carbsController.text = p.carbs.toString();
+      _ccalController.text = p.ccal.toString();
+      _quantityController.text = p.quantity.toString();
+      _selectedGroup = p.productGroup;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -106,11 +127,22 @@ class _ProductFormWidgetState extends State<ProductFormWidget> {
                 );
                 Navigator.of(context).pop();
 
-                context.read<UserbaseBloc>().add(
-                  UserbaseAddUserProduct(product: newProduct),
-                );
+                if (widget.isEdit) {
+                  context.read<UserbaseBloc>().add(
+                    EditUserProductEvent(
+                      newProduct: newProduct,
+                      oldTitle: widget.product?.title ?? '',
+                    ),
+                  );
+                } else {
+                  context.read<UserbaseBloc>().add(
+                    UserbaseAddUserProduct(product: newProduct),
+                  );
+                }
               },
-              child: Text('Добавить продукт'),
+              child: Text(
+                widget.isEdit ? 'Сохранить изменения' : 'Добавить продукт',
+              ),
             ),
           ],
         ),

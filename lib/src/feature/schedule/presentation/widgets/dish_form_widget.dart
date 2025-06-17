@@ -8,7 +8,15 @@ import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bl
 
 class DishFormWidget extends StatefulWidget {
   final List<Product> products;
-  const DishFormWidget({super.key, required this.products});
+  final Dish? dish;
+  final bool isEdit;
+
+  const DishFormWidget({
+    super.key,
+    required this.products,
+    this.dish,
+    this.isEdit = false,
+  });
 
   @override
   State<DishFormWidget> createState() => _DishFormWidgetState();
@@ -30,7 +38,23 @@ class _DishFormWidgetState extends State<DishFormWidget> {
   @override
   void initState() {
     super.initState();
+
     productsSelected = {for (var product in widget.products) product: false};
+
+    final d = widget.dish;
+    if (widget.isEdit && d != null) {
+      _titleController.text = d.title;
+      _mealTypeController.text = d.mealType;
+      _caloriesController.text = d.calories.toString();
+      _totalPriceController.text = d.totalPrice.toString();
+      _proteinController.text = d.protein.toString();
+      _fatsController.text = d.fats.toString();
+      _carbsController.text = d.carbs.toString();
+
+      for (var product in d.products) {
+        productsSelected[product] = true;
+      }
+    }
   }
 
   @override
@@ -45,11 +69,15 @@ class _DishFormWidgetState extends State<DishFormWidget> {
           SizedBox(height: 10),
           TextField(
             controller: _mealTypeController,
-            decoration: InputDecoration(labelText: 'Прием пищи'),
+            decoration: InputDecoration(
+              labelText: 'Прием пищи',
+              helperText: 'Завтрак/Обед...',
+            ),
           ),
           SizedBox(height: 10),
           ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: widget.products.length,
             itemBuilder: (context, index) {
               final currentProduct = widget.products[index];
@@ -101,6 +129,7 @@ class _DishFormWidgetState extends State<DishFormWidget> {
           SizedBox(height: 10),
           DropdownButton<ProductGroup>(
             value: _selectedGroup,
+            isExpanded: true,
             onChanged: (ProductGroup? newValue) {
               setState(() {
                 _selectedGroup = newValue!;
@@ -110,7 +139,10 @@ class _DishFormWidgetState extends State<DishFormWidget> {
                 ProductGroup.values.map((ProductGroup group) {
                   return DropdownMenuItem<ProductGroup>(
                     value: group,
-                    child: Text(group.displayName.split('.').last),
+                    child: Text(
+                      group.displayName.split('.').last,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   );
                 }).toList(),
           ),
@@ -142,15 +174,28 @@ class _DishFormWidgetState extends State<DishFormWidget> {
                 protein: int.tryParse(_proteinController.text) ?? 0,
                 fats: int.tryParse(_fatsController.text) ?? 0,
                 carbs: int.tryParse(_carbsController.text) ?? 0,
-                restrictions: {},
-                missingProducts: [],
+                restrictions: widget.dish?.restrictions ?? {},
+                missingProducts: widget.dish?.missingProducts ?? [],
               );
+
               Navigator.pop(context);
-              context.read<UserbaseBloc>().add(
-                UserbaseAddUserDish(dish: newDish),
-              );
+
+              if (widget.isEdit) {
+                context.read<UserbaseBloc>().add(
+                  EditUserDishEvent(
+                    newDish: newDish,
+                    oldTitle: widget.dish?.title ?? '',
+                  ),
+                );
+              } else {
+                context.read<UserbaseBloc>().add(
+                  UserbaseAddUserDish(dish: newDish),
+                );
+              }
             },
-            child: Text('Создать блюдо'),
+            child: Text(
+              widget.isEdit ? 'Сохранить изменения' : 'Создать блюдо',
+            ),
           ),
         ],
       ),

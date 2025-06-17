@@ -7,7 +7,7 @@ import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:naturly/src/core/common/models/product_model.dart';
 import 'package:naturly/src/core/common/services/food_service.dart';
 import 'package:naturly/src/feature/schedule/data/data_source/remote/schedule_remote_ds.dart';
-import 'package:naturly/src/feature/schedule/domain/models/week_ration.dart';
+import 'package:naturly/src/core/common/models/week_ration.dart';
 import 'package:naturly/src/feature/schedule/domain/repository/schedule_repository.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
@@ -124,10 +124,23 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
     final userRationDto = await scheduleRemoteDs.getWeekUserRation();
 
     final WeekRation ration =
-        userRationDto != null
+        userRationDto.foodData.isNotEmpty
             ? WeekRation.fromDto(userRationDto)
             : WeekRation.empty();
 
     return ration;
+  }
+
+  @override
+  Future<List<WeekRation>> getAllWeeksUserRation() async {
+    final userRationsDto = await scheduleRemoteDs.getAllWeeksUserRation();
+
+    final List<WeekRation> rations =
+        userRationsDto.isNotEmpty
+            ? userRationsDto.map((e) => WeekRation.fromDto(e)).toList()
+            : <WeekRation>[];
+    ;
+
+    return rations;
   }
 }

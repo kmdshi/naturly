@@ -13,6 +13,9 @@ import 'package:naturly/src/feature/schedule/presentation/blocs/userbase_bloc/bl
 import 'package:naturly/src/feature/settings/data/datasources/supabase_settings_ds.dart';
 import 'package:naturly/src/feature/settings/data/repository/settings_repository.dart';
 import 'package:naturly/src/feature/settings/presentation/bloc/settings_bloc.dart';
+import 'package:naturly/src/feature/share_meal/data/datasource/supabase_datasource.dart';
+import 'package:naturly/src/feature/share_meal/data/repository/share_meal_repository_impl.dart';
+import 'package:naturly/src/feature/share_meal/presentation/bloc/share_meal_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:naturly/src/core/common/error_reporter/error_reporter.dart';
@@ -86,7 +89,7 @@ Future<DependenciesContainer> createDependenciesContainer(
   final sharedPreferences = SharedPreferencesAsync();
 
   final supabaseClient = Supabase.instance.client;
-  
+
   final foodService = FoodService();
 
   final packageInfo = await PackageInfo.fromPlatform();
@@ -95,12 +98,18 @@ Future<DependenciesContainer> createDependenciesContainer(
 
   final scheduleSupabaseRemoteDS = createScheduleRemoteDs(supabaseClient);
 
+  final shareMealSupabaseRemoteDs = createShareMealSupabaseRemoteDs(
+    supabaseClient,
+  );
+
   final accountBloc = createAccountBloc(supabaseClient);
 
   final scheduleBloc = createScheduleBloc(
     foodService,
     scheduleSupabaseRemoteDS,
   );
+
+  final shareMealBloc = createShareMealBloc(shareMealSupabaseRemoteDs);
 
   final authCubit = createAuthCubit(supabaseClient);
 
@@ -121,6 +130,7 @@ Future<DependenciesContainer> createDependenciesContainer(
     scheduleBloc: scheduleBloc,
     userbaseBloc: userBaseBloc,
     settingsBloc: settingsBloc,
+    shareMealBloc: shareMealBloc,
     appSettingsBloc: appSettingsBloc,
   );
 }
@@ -150,6 +160,22 @@ Future<ErrorReporter> createErrorReporter(ApplicationConfig config) async {
 
 ScheduleSupabaseRemoteDS createScheduleRemoteDs(SupabaseClient supabaseClient) {
   return ScheduleSupabaseRemoteDS(supabase: supabaseClient);
+}
+
+ShareMealSupabaseRemoteDs createShareMealSupabaseRemoteDs(
+  SupabaseClient supabaseClient,
+) {
+  return ShareMealSupabaseRemoteDs(supabase: supabaseClient);
+}
+
+ShareMealBloc createShareMealBloc(
+  ShareMealSupabaseRemoteDs shareMealSupabaseRemoteDs,
+) {
+  return ShareMealBloc(
+    shareMealRepository: ShareMealRepositoryImpl(
+      scheduleRemoteDs: shareMealSupabaseRemoteDs,
+    ),
+  );
 }
 
 SettingsBloc createSettingsBloc(SupabaseClient supabaseClient) {

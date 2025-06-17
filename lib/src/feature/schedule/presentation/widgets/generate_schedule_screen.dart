@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naturly/src/core/common/models/human_profile.dart';
 import 'package:naturly/src/feature/schedule/presentation/blocs/schedule_bloc/schedule_bloc.dart';
 import 'package:naturly/src/feature/schedule/presentation/widgets/button_list_widget.dart';
-import 'package:naturly/src/feature/schedule/presentation/widgets/current_schedule_widget.dart';
+import 'package:naturly/src/core/widget/current_schedule_widget.dart';
 
 @RoutePage()
 class GenerateScheduleScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _GenerateScheduleScreenState extends State<GenerateScheduleScreen> {
             if (state is ScheduleLoaded) {
               return Column(
                 children: [
-                  CurrentScheduleWidget(ration: state.ration),
+                  CurrentScheduleWidget(ration: state.ration, isView: true,),
                   SizedBox(height: 15),
                   ButtonListWidget(
                     buttons: [
