@@ -105850,49 +105850,52 @@ case 6:case 1:return A.t(q,r)
 case 2:return A.r(o.at(-1),r)}})
 return A.u($async$mF,r)},
 oJ(a){return this.axU(a)},
-axU(a){var s=0,r=A.v(t.N),q,p=this,o,n,m,l,k,j,i,h,g,f
+axU(a){var s=0,r=A.v(t.N),q,p=this,o,n,m,l,k,j,i,h,g,f,e
 var $async$oJ=A.q(function(b,c){if(b===1)return A.r(c,r)
-while(true)switch(s){case 0:h=p.a
-g=h.gec().c
-f=g==null?null:g.a
-g=Date.now()
-if(f==null)throw A.c(A.da("User not authenticated"))
-o=p.a7r(new A.c_(g,0,!1))
+while(true)switch(s){case 0:g=p.a
+f=g.gec().c
+e=f==null?null:f.a
+f=Date.now()
+if(e==null)throw A.c(A.da("User not authenticated"))
+o=p.a7r(new A.c_(f,0,!1))
 s=3
 return A.p(A.b0Z(8),$async$oJ)
 case 3:n=c
 s=4
-return A.p(h.hk("Rations").o9(0,"id, food_data").fT("usid",f).fT("week_key",o).Gt(),$async$oJ)
+return A.p(g.hk("Rations").o9(0,"id, food_data, share_id").fT("usid",e).fT("week_key",o).Gt(),$async$oJ)
 case 4:m=c
-s=m==null?5:6
+f=m==null
+l=f?null:J.ae(m,"share_id")
+if(l==null)l=n
+s=f?5:6
 break
-case 5:h=h.hk("Rations")
-g=J.dA(a,new A.aB7(),t.P)
+case 5:g=g.hk("Rations")
+f=J.dA(a,new A.aB7(),t.P)
 s=7
-return A.p(h.pj(0,A.a9(["usid",f,"food_data",A.U(g,!0,g.$ti.h("ah.E")),"week_key",o,"share_id",n],t.N,t.K)),$async$oJ)
-case 7:q=n
+return A.p(g.pj(0,A.a9(["usid",e,"food_data",A.U(f,!0,f.$ti.h("ah.E")),"week_key",o,"share_id",l],t.N,t.z)),$async$oJ)
+case 7:q=l
 s=1
 break
-case 6:g=J.ae(m,"food_data")
-if(g==null)g=[]
-l=t.P
-k=A.bL(g,!0,l)
-s=k.length!==0?8:10
+case 6:f=J.ae(m,"food_data")
+if(f==null)f=[]
+k=t.P
+j=A.bL(f,!0,k)
+s=j.length!==0?8:10
 break
-case 8:for(g=J.aU(a);g.p();){l=g.gM(g)
-j=B.b.rw(k,new A.aB8(l))
-if(j!==-1)k[j]=l.eF()
-else k.push(l.eF())}g=t.z
+case 8:for(f=J.aU(a);f.p();){k=f.gM(f)
+i=B.b.rw(j,new A.aB8(k))
+if(i!==-1)j[i]=k.eF()
+else j.push(k.eF())}f=t.z
 s=11
-return A.p(h.hk("Rations").cD(0,A.a9(["food_data",k],g,g)).fT("usid",f).fT("week_key",o),$async$oJ)
+return A.p(g.hk("Rations").cD(0,A.a9(["food_data",j],f,f)).fT("usid",e).fT("week_key",o),$async$oJ)
 case 11:s=9
 break
-case 10:g=J.dA(a,new A.aB9(),l)
-i=A.U(g,!0,g.$ti.h("ah.E"))
-g=t.z
+case 10:f=J.dA(a,new A.aB9(),k)
+h=A.U(f,!0,f.$ti.h("ah.E"))
+f=t.z
 s=12
-return A.p(h.hk("Rations").cD(0,A.a9(["food_data",i],g,g)).fT("usid",f).fT("week_key",o),$async$oJ)
-case 12:case 9:q=n
+return A.p(g.hk("Rations").cD(0,A.a9(["food_data",h],f,f)).fT("usid",e).fT("week_key",o),$async$oJ)
+case 12:case 9:q=l
 s=1
 break
 case 1:return A.t(q,r)}})
