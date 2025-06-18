@@ -127,6 +127,7 @@ class _DishDialogState extends State<DishDialog> {
     final updatedDayWithCalories = updatedDay.copyWith(
       totalCcal: FoodService().recalculateCalories(updatedDay),
     );
+    
     // TODO: сделать рекалькулейт в DayRation
     ration[widget.dayIndex] = updatedDayWithCalories;
 

@@ -124,9 +124,7 @@ class ScheduleSupabaseRemoteDS {
 
     if (data.isNotEmpty) {
       for (final newDay in ration) {
-        final index = data.indexWhere(
-          (d) => d['date'] == newDay.toMap()['date'],
-        );
+        final index = data.indexWhere((d) => d['day'] == newDay.toMap()['day']);
         if (index != -1) {
           data[index] = newDay.toMap();
         } else {
