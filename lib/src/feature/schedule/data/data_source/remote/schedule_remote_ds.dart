@@ -100,24 +100,26 @@ class ScheduleSupabaseRemoteDS {
 
     final weekKey = weekKeyFromDate(today);
 
-    final shareKey = await nanoid(8);
+    final defaultWeekKey = await nanoid(8);
 
     final existing =
         await supabase
             .from('Rations')
-            .select('id, food_data')
+            .select('id, food_data, share_id')
             .eq('usid', userId)
             .eq('week_key', weekKey)
             .maybeSingle();
+
+    final actualWeekKey = existing?['share_id'] ?? defaultWeekKey;
 
     if (existing == null) {
       await supabase.from('Rations').insert({
         'usid': userId,
         'food_data': ration.map((r) => r.toMap()).toList(),
         'week_key': weekKey,
-        'share_id': shareKey,
+        'share_id': actualWeekKey,
       });
-      return shareKey;
+      return actualWeekKey;
     }
 
     final data = List<Map<String, dynamic>>.from(existing['food_data'] ?? []);
@@ -146,7 +148,7 @@ class ScheduleSupabaseRemoteDS {
           .eq('week_key', weekKey);
     }
 
-    return shareKey;
+    return actualWeekKey;
   }
 
   String weekKeyFromDate(DateTime date) {
