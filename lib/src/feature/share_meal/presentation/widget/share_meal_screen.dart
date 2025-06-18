@@ -13,10 +13,23 @@ class ShareMealScreen extends StatefulWidget {
 }
 
 class _ShareMealScreenState extends State<ShareMealScreen> {
+  String? _id;
+
   @override
-  void initState() {
-    onInit();
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_id != null) return;
+
+    final routeData = RouteData.of(context);
+    final id = routeData.queryParams.get('id');
+
+    if (id != null) {
+      _id = id;
+      context.read<ShareMealBloc>().add(
+        GetAnotherRationShareMealEvent(week_key: id),
+      );
+    }
   }
 
   @override
@@ -55,18 +68,5 @@ class _ShareMealScreenState extends State<ShareMealScreen> {
         },
       ),
     );
-  }
-
-  void onInit() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final routeData = RouteData.of(context);
-      final id = routeData.queryParams.get('id');
-
-      if (id != null) {
-        context.read<ShareMealBloc>().add(
-          GetAnotherRationShareMealEvent(week_key: id),
-        );
-      }
-    });
   }
 }
