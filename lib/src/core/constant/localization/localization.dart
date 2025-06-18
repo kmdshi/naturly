@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:naturly/src/core/constant/localization/generated/app_localizations.gen.dart';
+import 'package:naturly/src/core/l10n/app_localizations.dart';
 
 
 final class Localization {

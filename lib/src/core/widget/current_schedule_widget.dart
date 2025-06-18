@@ -47,7 +47,6 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               final day = widget.ration.foodData[index];
-
               return Column(
                 children: [
                   Text(
@@ -115,7 +114,7 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
                                 () async => Clipboard.setData(
                                   ClipboardData(
                                     text:
-                                        "http://localhost:5500/#/schedule/share?id=${widget.ration.shareId}",
+                                        "http://kmdshi.github.io/#/schedule/share?id=${widget.ration.shareId}",
                                   ),
                                 ),
                             child: Text('Поделиться рационом'),
@@ -131,76 +130,81 @@ class _CurrentScheduleWidgetState extends State<CurrentScheduleWidget> {
             },
           ),
         )
-        : Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Color(0xFFE6E6E6)),
-          ),
-          child: Table(
-            border: TableBorder(
-              verticalInside: BorderSide.none,
-              horizontalInside: BorderSide(color: Color(0xFFE6E6E6)),
+        : Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Color(0xFFE6E6E6)),
+              ),
+              child: Table(
+                border: TableBorder(
+                  verticalInside: BorderSide.none,
+                  horizontalInside: BorderSide(color: Color(0xFFE6E6E6)),
+                ),
+                columnWidths: const {0: IntrinsicColumnWidth()},
+                children: [
+                  _buildDesktopRow(
+                    'День',
+                    widget.isView,
+                    null,
+                    context,
+                    staticValues:
+                        widget.ration.foodData
+                            .map((e) => getDayName(e.day!, true))
+                            .toList(),
+                  ),
+                  _buildDesktopRow(
+                    'Завтрак',
+                    widget.isView,
+                    widget.ration.foodData.map((e) => e.morningDish).toList(),
+                    context,
+                  ),
+                  _buildDesktopRow(
+                    'Обед',
+                    widget.isView,
+                    widget.ration.foodData.map((e) => e.lunchDish).toList(),
+                    context,
+                  ),
+                  _buildDesktopRow(
+                    'Перекус',
+                    widget.isView,
+                    widget.ration.foodData.map((e) => e.snackDish).toList(),
+                    context,
+                  ),
+                  _buildDesktopRow(
+                    'Ужин',
+                    widget.isView,
+                    widget.ration.foodData.map((e) => e.dinnerDish).toList(),
+                    context,
+                  ),
+                  _buildDesktopRow(
+                    'Калории',
+                    widget.isView,
+                    null,
+                    context,
+                    staticValues:
+                        widget.ration.foodData
+                            .map((e) => e.totalCcal?.toString())
+                            .toList(),
+                  ),
+                ],
+              ),
             ),
-            columnWidths: const {0: IntrinsicColumnWidth()},
-            children: [
-              _buildDesktopRow(
-                'День',
-                widget.isView,
-                null,
-                context,
-                staticValues:
-                    widget.ration.foodData
-                        .map((e) => getDayName(e.day!, true))
-                        .toList(),
-              ),
-              _buildDesktopRow(
-                'Завтрак',
-                widget.isView,
-
-                widget.ration.foodData.map((e) => e.morningDish).toList(),
-                context,
-              ),
-              _buildDesktopRow(
-                'Завтрак',
-                widget.isView,
-
-                widget.ration.foodData.map((e) => e.morningDish).toList(),
-                context,
-              ),
-              _buildDesktopRow(
-                'Обед',
-                widget.isView,
-
-                widget.ration.foodData.map((e) => e.lunchDish).toList(),
-                context,
-              ),
-              _buildDesktopRow(
-                'Перекус',
-                widget.isView,
-
-                widget.ration.foodData.map((e) => e.snackDish).toList(),
-                context,
-              ),
-              _buildDesktopRow(
-                'Ужин',
-                widget.isView,
-
-                widget.ration.foodData.map((e) => e.dinnerDish).toList(),
-                context,
-              ),
-              _buildDesktopRow(
-                'Калории',
-                widget.isView,
-
-                null,
-                context,
-                staticValues:
-                    widget.ration.foodData
-                        .map((e) => e.totalCcal?.toString())
-                        .toList(),
-              ),
-            ],
-          ),
+            SizedBox(height: 15),
+            widget.isView
+                ? SizedBox.shrink()
+                : ElevatedButton(
+                  onPressed:
+                      () async => Clipboard.setData(
+                        ClipboardData(
+                          text:
+                              "https://kmdshi.github.io/naturly/#/schedule/share?id=${widget.ration.shareId}",
+                        ),
+                      ),
+                  child: Text('Поделиться рационом'),
+                ),
+          ],
         );
   }
 
