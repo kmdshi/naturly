@@ -42,9 +42,9 @@ class AppRouter extends RootStackRouter {
           ],
         ),
         AutoRoute(
-          path: 'analysis',
-          page: AnalysisTab.page,
-          children: [AutoRoute(path: '', page: AnalysisRoute.page)],
+          path: 'search',
+          page: SearchTab.page,
+          children: [AutoRoute(path: '', page: SearchRoute.page)],
         ),
 
         AutoRoute(

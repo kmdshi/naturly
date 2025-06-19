@@ -16,7 +16,7 @@ class _RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter(
-      routes: [HomeRoute(), ScheduleRoute(), AnalysisRoute(), SettingsRoute()],
+      routes: [HomeRoute(), ScheduleRoute(), SearchRoute(), SettingsRoute()],
       builder: (context, tb) {
         final tabsRouter = AutoTabsRouter.of(context);
 
@@ -29,7 +29,7 @@ class _RootScreenState extends State<RootScreen> {
                 onTap: tabsRouter.setActiveIndex,
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: Colors.white,
-                selectedItemColor: Color(0xFF5932EA),
+                selectedItemColor: Color(0xFF5BAA3F),
                 unselectedItemColor: Colors.black54,
                 selectedFontSize: 12,
                 unselectedFontSize: 12,
@@ -53,7 +53,7 @@ class _RootScreenState extends State<RootScreen> {
                         'assets/icons/home.png',
                         width: 26,
                         height: 26,
-                        color: Color(0xFF5932EA),
+                        color: Color(0xFF5BAA3F),
                       ),
                     ),
                     label: 'Home',
@@ -76,7 +76,7 @@ class _RootScreenState extends State<RootScreen> {
                         'assets/icons/calendar.png',
                         width: 26,
                         height: 26,
-                        color: Color(0xFF5932EA),
+                        color: Color(0xFF5BAA3F),
                       ),
                     ),
                     label: 'Schedule',
@@ -86,7 +86,7 @@ class _RootScreenState extends State<RootScreen> {
                       height: 48,
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/icons/analysis.png',
+                        'assets/icons/search.png',
                         width: 26,
                         height: 26,
                         color: Colors.black54,
@@ -96,13 +96,13 @@ class _RootScreenState extends State<RootScreen> {
                       height: 48,
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/icons/analysis.png',
+                        'assets/icons/search.png',
                         width: 26,
                         height: 26,
-                        color: Color(0xFF5932EA),
+                        color: Color(0xFF5BAA3F),
                       ),
                     ),
-                    label: 'Analysis',
+                    label: 'Search',
                   ),
                   BottomNavigationBarItem(
                     icon: Container(
@@ -122,7 +122,7 @@ class _RootScreenState extends State<RootScreen> {
                         'assets/icons/settings.png',
                         width: 26,
                         height: 26,
-                        color: Color(0xFF5932EA),
+                        color: Color(0xFF5BAA3F),
                       ),
                     ),
                     label: 'Settings',

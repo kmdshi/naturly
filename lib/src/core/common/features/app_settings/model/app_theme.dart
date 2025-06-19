@@ -21,7 +21,7 @@ final class AppTheme with Diagnosticable {
     // );
     return ThemeData(
       scaffoldBackgroundColor:
-          brightness == Brightness.light ? Color(0xFFF8FAFB) : Colors.grey,
+          brightness == Brightness.light ? Color(0xFFF9F7F4) : Colors.grey,
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         elevation: 0,
 

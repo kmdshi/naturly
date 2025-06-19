@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naturly/src/feature/home/widget/graph_widget.dart';
-import 'package:naturly/src/feature/home/widget/nutrients_widget.dart';
+import 'package:naturly/src/feature/home/widget/nutrients_info_widget.dart';
 
 class HomeScreenDesktop extends StatefulWidget {
   const HomeScreenDesktop({super.key});
@@ -16,39 +16,20 @@ class _HomeScreenDesktopState extends State<HomeScreenDesktop> {
       children: [
         Row(
           children: [
-            NutrientWidget(
-              title: 'Жиры',
-              subtitle: 'гр',
-              nutrient: 12,
-              nutrientDaily: 33,
-            ),
-            SizedBox(width: 10),
-            NutrientWidget(
-              title: 'Белки',
-              subtitle: 'гр',
-              nutrient: 1,
-              nutrientDaily: 22,
-            ),
-            SizedBox(width: 10),
-
-            NutrientWidget(
-              title: 'Углеводы',
-              subtitle: 'гр',
-              nutrient: 5,
-              nutrientDaily: 52,
-            ),
-            SizedBox(width: 10),
-
-            NutrientWidget(
-              title: 'Калории',
-              subtitle: 'ккал',
-              nutrient: 1283,
-              nutrientDaily: 2200,
+            NutrientsWidget(
+              caloriesGoal: 12,
+              eatenCalories: 2,
+              proteinGoal: 2,
+              proteinEaten: 3,
+              fatsGoal: 3,
+              fatsEaten: 4,
+              carbsGoal: 5,
+              carbsEaten: 5,
             ),
           ],
         ),
         SizedBox(height: 20),
-        GraphWidget(),
+        CaloriesGraphWidget(),
       ],
     );
   }

@@ -1,151 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:naturly/src/core/common/layout/layout.dart';
 
-class GraphWidget extends StatefulWidget {
-  const GraphWidget({super.key});
-
-  @override
-  State<GraphWidget> createState() => _GraphWidgetState();
-}
-
-class _GraphWidgetState extends State<GraphWidget> {
-  final List<double> maxValues = [
-    80,
-    90,
-    100,
-    60,
-    50,
-    70,
-    85,
-    100,
-    90,
-    80,
-    70,
-    90,
-  ];
-  final List<double> applied = [50, 70, 80, 40, 30, 50, 60, 77, 65, 55, 45, 70];
+class CaloriesGraphWidget extends StatelessWidget {
+  const CaloriesGraphWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isPhone =
-        WindowSizeScope.of(context).isCompact ||
-        WindowSizeScope.of(context).isMedium;
+    final List<double> eatenCalories = [
+      1500,
+      1700,
+      2100,
+      1800,
+      1900,
+      1600,
+      2000,
+    ];
+    final List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 50),
-      height: 300,
+      height: 320,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Color(0xFFECEEF6).withValues(alpha: 0.3),
+          color: const Color(0xFFECEEF6).withOpacity(0.3),
           width: 1.6,
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
-          Text(
-            'Текущая неделя',
+          const Text(
+            'Calorie Intake Last 7 Days',
             style: TextStyle(
-              fontFamily: 'Inter',
+              fontFamily: 'Figtree',
+              fontWeight: FontWeight.w700,
               fontSize: 16,
-              color: Colors.black87,
-              fontWeight: FontWeight.bold,
+              color: Color(0xFF432912),
             ),
           ),
+          const SizedBox(height: 16),
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: 900,
-                child: BarChart(
-                  BarChartData(
-                    maxY: 110,
-
-                    barGroups: List.generate(applied.length, (index) {
-                      final jobApplied = applied[index];
-                      final jobView = maxValues[index];
-                      return BarChartGroupData(
-                        x: index,
-                        barRods: [
-                          BarChartRodData(
-                            toY: jobView,
-                            width: isPhone ? 22 : 55,
-                            rodStackItems: [
-                              BarChartRodStackItem(
-                                0,
-                                jobApplied,
-                                Color(0XFF5932EA),
-                              ),
-                              BarChartRodStackItem(
-                                jobApplied,
-                                jobView,
-                                Color(0xFFF2EFFF),
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ],
-                      );
-                    }),
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, _) {
-                            final months = [
-                              'Jan',
-                              'Feb',
-                              'Mar',
-                              'Apr',
-                              'May',
-                              'Jun',
-                              'Jul',
-                              'Aug',
-                              'Sep',
-                              'Oct',
-                              'Nov',
-                              'Dec',
-                            ];
-                            return Text(months[value.toInt()]);
-                          },
-                        ),
+            child: BarChart(
+              BarChartData(
+                maxY: 2300,
+                groupsSpace: 10,
+                barGroups: List.generate(7, (index) {
+                  return BarChartGroupData(
+                    x: index,
+                    barRods: [
+                      BarChartRodData(
+                        toY: eatenCalories[index],
+                        width: 24,
+                        borderRadius: BorderRadius.circular(6),
+                        color: const Color(0xFFFFA115),
                       ),
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, _) {
-                            if (value % 20 == 0 && value <= 100) {
-                              return Text(value.toInt().toString());
-                            }
-                            return const SizedBox.shrink();
-                          },
-                          reservedSize: 40,
-                        ),
-                      ),
+                    ],
+                  );
+                }),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 500,
+                      getTitlesWidget: (value, _) {
+                        if (value % 500 == 0 && value <= 2500) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(fontSize: 11),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                      reservedSize: 32,
                     ),
-                    gridData: FlGridData(
-                      show: true,
-                      drawVerticalLine: false,
-                      getDrawingHorizontalLine:
-                          (_) => FlLine(
-                            color: Colors.grey.withValues(alpha: 0.1),
-                            strokeWidth: 1,
-                            dashArray: [5, 5],
-                          ),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, _) {
+                        return Text(
+                          weekDays[value.toInt()],
+                          style: const TextStyle(fontSize: 12),
+                        );
+                      },
                     ),
-
-                    borderData: FlBorderData(show: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine:
+                      (_) => FlLine(
+                        color: Colors.grey.withValues(alpha: 0.1),
+                        strokeWidth: 1,
+                        dashArray: [4, 4],
+                      ),
+                ),
+                borderData: FlBorderData(show: false),
               ),
             ),
           ),

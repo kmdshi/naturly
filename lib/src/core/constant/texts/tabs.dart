@@ -10,9 +10,9 @@ class ScheduleTab extends AutoRouter {
   const ScheduleTab({super.key});
 }
 
-@RoutePage(name: 'AnalysisTab')
-class AnalysisTab extends AutoRouter {
-  const AnalysisTab({super.key});
+@RoutePage(name: 'SearchTab')
+class SearchTab extends AutoRouter {
+  const SearchTab({super.key});
 }
 
 @RoutePage(name: 'SettingsTab')
